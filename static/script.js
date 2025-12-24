@@ -1,91 +1,62 @@
-// 💬 Ask AI
 async function askAI() {
-  const question = document.getElementById("question").value.trim();
-  const answerBox = document.getElementById("answer");
-  answerBox.innerHTML = "<p>🤔 Thinking...</p>";
-
-  if (!question) {
-    answerBox.innerHTML = "<p style='color:red;'>Please enter a question!</p>";
-    return;
-  }
-
-  try {
-    const res = await fetch("/ask", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: question })   // ✅ FIXED
-    });
-
-    const data = await res.json();
-
-    if (data.error) {
-      answerBox.innerHTML = `<p style='color:red;'>Error: ${data.error}</p>`;
-    } else {
-      answerBox.innerHTML = `<b>🧠 AI:</b><br>${data.answer.replace(/\n/g, "<br>")}`;
-    }
-  } catch {
-    answerBox.innerHTML = "<p style='color:red;'>⚠️ Error connecting to server.</p>";
-  }
+  const q = question.value;
+  const res = await fetch("/ask", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({question: q})
+  });
+  const d = await res.json();
+  answer.innerHTML = d.answer.replace(/\n/g,"<br>");
 }
 
-
-// 🧮 Generate Quiz (MCQs)
-async function generateQuiz() {
-  const topic = document.getElementById("topic").value.trim();
-  const quizBox = document.getElementById("quiz");
-  quizBox.innerHTML = "<p>🧮 Generating quiz...</p>";
-
-  if (!topic) {
-    quizBox.innerHTML = "<p style='color:red;'>Please enter a topic!</p>";
-    return;
-  }
-
-  try {
-    const res = await fetch("/test", {   // ✅ FIXED (/quiz → /test)
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ topic })    // ✅ FIXED
-    });
-
-    const data = await res.json();
-
-    if (data.error) {
-      quizBox.innerHTML = `<p style='color:red;'>Error: ${data.error}</p>`;
-    } else {
-      quizBox.innerHTML = `<b>📘 Quiz on ${topic}:</b><br>${data.test.replace(/\n/g, "<br>")}`;
-    }
-  } catch {
-    quizBox.innerHTML = "<p style='color:red;'>⚠️ Error connecting to server.</p>";
-  }
-}
-
-
-// ✂️ Summarize Notes
 async function summarizeNotes() {
-  const text = document.getElementById("notes").value.trim();
-  const summaryBox = document.getElementById("summary");
-  summaryBox.innerHTML = "<p>🪶 Summarizing...</p>";
+  const res = await fetch("/summarize", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({text:notes.value})
+  });
+  const d = await res.json();
+  summary.innerHTML = d.summary.replace(/\n/g,"<br>");
+}
 
-  if (!text) {
-    summaryBox.innerHTML = "<p style='color:red;'>Please paste some notes first!</p>";
-    return;
-  }
+async function startQuiz() {
+  const res = await fetch("/quiz", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      topic:quizTopic.value,
+      mode:quizType.value,
+      count:questionCount.value
+    })
+  });
+  const d = await res.json();
+  quizArea.textContent = d.quiz;
+}
 
-  try {
-    const res = await fetch("/summarize", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ text })
-    });
+async function generatePdfTest() {
+  const f = pdfFile.files[0];
+  const form = new FormData();
+  form.append("pdf", f);
+  form.append("mode", pdfMode.value);
+  form.append("count", pdfCount.value);
 
-    const data = await res.json();
+  const res = await fetch("/pdf-test", {method:"POST", body:form});
+  const d = await res.json();
+  pdfQuiz.textContent = d.quiz || d.error;
+}
 
-    if (data.error) {
-      summaryBox.innerHTML = `<p style='color:red;'>Error: ${data.error}</p>`;
-    } else {
-      summaryBox.innerHTML = `<b>📝 Summary:</b><br>${data.summary.replace(/\n/g, "<br>")}`;
-    }
-  } catch {
-    summaryBox.innerHTML = "<p style='color:red;'>⚠️ Error connecting to server.</p>";
-  }
+async function analyze() {
+  const res = await fetch("/analyze-result", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      total:totalQ.value,
+      correct:correctQ.value
+    })
+  });
+  const d = await res.json();
+  resultBox.textContent =
+    `Score: ${d.correct}/${d.total}\n` +
+    `Percentage: ${d.percentage}%\n` +
+    `Feedback: ${d.feedback}`;
 }
