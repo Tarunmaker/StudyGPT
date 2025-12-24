@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>StudyGPT</title>
   <link rel="stylesheet" href="/static/style.css">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,21 +21,21 @@
 
     <!-- Ask AI -->
     <section class="card">
-      <h3>💬 Ask AI (Explain)</h3>
-      <textarea id="question" placeholder="Ask anything..."></textarea>
-      <button onclick="askAI()">Ask</button>
+      <h3>💬 Ask AI (Teacher Mode)</h3>
+      <textarea id="question" placeholder="Ask your doubt..."></textarea>
+      <button onclick="askAI()">Explain</button>
       <div id="answer" class="output"></div>
     </section>
 
     <!-- Quiz -->
     <section class="card">
-      <h3>🧠 Quiz Generator (With Answers)</h3>
-      <input id="topic" placeholder="Enter topic (e.g. Physics)">
+      <h3>🧠 Practice Quiz</h3>
+      <input id="topic" placeholder="Enter topic">
       <button onclick="generateQuiz()">Generate Quiz</button>
       <div id="quiz" class="output"></div>
     </section>
 
-    <!-- Summary -->
+    <!-- Summarize -->
     <section class="card">
       <h3>📝 Summarize Notes</h3>
       <textarea id="notes" placeholder="Paste notes here..."></textarea>
