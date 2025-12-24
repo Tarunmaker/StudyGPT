@@ -1,54 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>StudyGPT – AI Teacher</title>
+  <title>StudyGPT</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<h1>🎓 StudyGPT – AI Teacher</h1>
+<h1>🎓 StudyGPT</h1>
 
-<h2>💬 Ask AI</h2>
-<textarea id="question"></textarea>
-<button onclick="askAI()">Explain</button>
-<div id="answer"></div>
+<a href="/dashboard">📊 Dashboard</a> |
+<a href="/leaderboard">🏆 Leaderboard</a>
 
-<h2>✂️ Summarize Notes</h2>
-<textarea id="notes"></textarea>
-<button onclick="summarizeNotes()">Summarize</button>
-<div id="summary"></div>
+<h3>Ask AI</h3>
+<textarea id="q"></textarea>
+<button onclick="ask()">Ask</button>
+<div id="ans"></div>
 
-<h2>📝 Quiz / Test</h2>
-<select id="quizType">
-  <option value="with_answer">Quiz with Answers</option>
-  <option value="test_mode">Test Mode</option>
+<h3>Quiz</h3>
+<input id="topic" placeholder="Topic">
+<select id="count">
+  <option>5</option>
+  <option>10</option>
 </select>
-<select id="questionCount">
-  <option value="5">5</option>
-  <option value="10">10</option>
-</select>
-<input id="quizTopic" placeholder="Topic">
-<button onclick="startQuiz()">Start</button>
-<pre id="quizArea"></pre>
-
-<h2>📄 PDF → Test</h2>
-<input type="file" id="pdfFile">
-<select id="pdfMode">
-  <option value="with_answer">With Answers</option>
-  <option value="test_mode">Test Mode</option>
-</select>
-<select id="pdfCount">
-  <option value="5">5</option>
-  <option value="10">10</option>
-</select>
-<button onclick="generatePdfTest()">Generate</button>
-<pre id="pdfQuiz"></pre>
-
-<h2>📊 Result Analytics</h2>
-<input id="totalQ" placeholder="Total Questions">
-<input id="correctQ" placeholder="Correct Answers">
-<button onclick="analyze()">Analyze</button>
-<pre id="resultBox"></pre>
+<button onclick="quiz()">Generate</button>
+<pre id="quiz"></pre>
 
 <script src="/static/script.js"></script>
 </body>
