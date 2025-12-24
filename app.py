@@ -5,7 +5,7 @@ from openai import OpenAI
 app = Flask(__name__)
 
 # OpenAI client (Render ENV se key lega)
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+client = OpenAI(api_key=os.environ.get("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"))
 
 # Home
 @app.route("/")
