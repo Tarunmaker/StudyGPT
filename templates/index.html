@@ -1,51 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>StudyGPT</title>
-  <link rel="stylesheet" href="/static/style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyGPT</title>
+<link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
+<body class="light">
 
-<div class="app">
+<button class="toggle" onclick="toggleMode()">🌙</button>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <h2>📘 StudyGPT</h2>
-    <p class="tagline">Your AI Study Partner</p>
-  </aside>
+<h1>StudyGPT</h1>
+<a href="/dashboard">📊 Dashboard</a>
 
-  <!-- Main -->
-  <main class="main">
+<section>
+<h2>Ask AI</h2>
+<textarea id="question"></textarea>
+<button onclick="askAI()">Ask</button>
+<div id="answer"></div>
+</section>
 
-    <!-- Ask AI -->
-    <section class="card">
-      <h3>💬 Ask AI (Teacher Mode)</h3>
-      <textarea id="question" placeholder="Ask your doubt..."></textarea>
-      <button onclick="askAI()">Explain</button>
-      <div id="answer" class="output"></div>
-    </section>
-
-    <!-- Quiz -->
-    <section class="card">
-      <h3>🧠 Practice Quiz</h3>
-      <input id="topic" placeholder="Enter topic">
-      <button onclick="generateQuiz()">Generate Quiz</button>
-      <div id="quiz" class="output"></div>
-    </section>
-
-    <!-- Summarize -->
-    <section class="card">
-      <h3>📝 Summarize Notes</h3>
-      <textarea id="notes" placeholder="Paste notes here..."></textarea>
-      <button onclick="summarizeNotes()">Summarize</button>
-      <div id="summary" class="output"></div>
-    </section>
-
-  </main>
-
-</div>
+<section>
+<h2>Real Test Mode</h2>
+<input id="topic" placeholder="Topic">
+<button onclick="startTest()">Start Test</button>
+<div id="testBox"></div>
+</section>
 
 <script src="/static/script.js"></script>
 </body>
