@@ -13,7 +13,7 @@ async function askAI() {
     const res = await fetch("/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question })
+      body: JSON.stringify({ prompt: question })   // ✅ FIXED
     });
 
     const data = await res.json();
@@ -28,7 +28,8 @@ async function askAI() {
   }
 }
 
-// 🧩 Generate Quiz
+
+// 🧮 Generate Quiz (MCQs)
 async function generateQuiz() {
   const topic = document.getElementById("topic").value.trim();
   const quizBox = document.getElementById("quiz");
@@ -40,10 +41,10 @@ async function generateQuiz() {
   }
 
   try {
-    const res = await fetch("/quiz", {
+    const res = await fetch("/test", {   // ✅ FIXED (/quiz → /test)
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ question: topic })
+      body: JSON.stringify({ topic })    // ✅ FIXED
     });
 
     const data = await res.json();
@@ -51,12 +52,13 @@ async function generateQuiz() {
     if (data.error) {
       quizBox.innerHTML = `<p style='color:red;'>Error: ${data.error}</p>`;
     } else {
-      quizBox.innerHTML = `<b>📘 Quiz on ${topic}:</b><br>${data.answer.replace(/\n/g, "<br>")}`;
+      quizBox.innerHTML = `<b>📘 Quiz on ${topic}:</b><br>${data.test.replace(/\n/g, "<br>")}`;
     }
   } catch {
     quizBox.innerHTML = "<p style='color:red;'>⚠️ Error connecting to server.</p>";
   }
 }
+
 
 // ✂️ Summarize Notes
 async function summarizeNotes() {
