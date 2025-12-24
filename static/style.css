@@ -1,87 +1,91 @@
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #343541;
-  color: white;
+  background: #f7f7f8;
+  font-family: "Segoe UI", system-ui, sans-serif;
+  color: #222;
 }
 
-.app {
-  display: flex;
-  height: 100vh;
+.container {
+  max-width: 850px;
+  margin: auto;
+  padding: 30px 15px 80px;
 }
 
-/* Sidebar */
-.sidebar {
-  width: 220px;
-  background: #202123;
-  padding: 15px;
+h1 {
+  text-align: center;
+  margin-bottom: 5px;
 }
 
-.sidebar h2 {
-  margin-bottom: 20px;
+.tagline {
+  text-align: center;
+  color: #666;
+  margin-bottom: 30px;
 }
 
-.sidebar button {
-  width: 100%;
-  padding: 10px;
-  background: #444;
-  border: none;
-  color: white;
-  cursor: pointer;
-}
-
-/* Chat */
-.chat-container {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.chat-box {
-  flex: 1;
+/* Card */
+.card {
+  background: #ffffff;
+  border-radius: 12px;
   padding: 20px;
-  overflow-y: auto;
+  margin-bottom: 25px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
 }
 
-.message {
-  max-width: 70%;
-  padding: 12px;
+.card h2 {
+  margin-top: 0;
   margin-bottom: 12px;
+}
+
+/* Inputs */
+textarea, input {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
   border-radius: 8px;
-  line-height: 1.4;
-}
-
-.user {
-  background: #0b93f6;
-  margin-left: auto;
-}
-
-.ai {
-  background: #444654;
-  margin-right: auto;
-}
-
-/* Input */
-.input-box {
-  display: flex;
-  padding: 15px;
-  background: #40414f;
+  border: 1px solid #ddd;
+  outline: none;
+  margin-bottom: 10px;
 }
 
 textarea {
-  flex: 1;
-  resize: none;
-  padding: 10px;
-  border-radius: 6px;
-  border: none;
+  min-height: 110px;
+  resize: vertical;
 }
 
+textarea:focus, input:focus {
+  border-color: #19c37d;
+}
+
+/* Button */
 button {
-  margin-left: 10px;
-  padding: 10px 16px;
   background: #19c37d;
   border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 15px;
   cursor: pointer;
-  color: black;
-  border-radius: 6px;
+  color: #000;
+}
+
+button:hover {
+  background: #16a96c;
+}
+
+/* Output */
+.output {
+  margin-top: 15px;
+  background: #f1f1f1;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+.output p {
+  margin: 0;
+}
+
+.output b {
+  display: block;
+  margin-bottom: 6px;
 }
