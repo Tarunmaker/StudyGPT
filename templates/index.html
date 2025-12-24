@@ -1,42 +1,54 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>AI Study Helper</title>
+  <title>StudyGPT – AI Teacher</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<div class="container">
-  <h1>🧠 AI Study Helper</h1>
-  <p class="tagline">
-    Your personal AI tutor for explaining, summarizing, and testing.
-  </p>
+<h1>🎓 StudyGPT – AI Teacher</h1>
 
-  <!-- Ask AI -->
-  <div class="card">
-    <h2>Ask AI (Explain)</h2>
-    <textarea id="question" placeholder="Ask something..."></textarea>
-    <button onclick="askAI()">Explain</button>
-    <div id="answer" class="output"></div>
-  </div>
+<h2>💬 Ask AI</h2>
+<textarea id="question"></textarea>
+<button onclick="askAI()">Explain</button>
+<div id="answer"></div>
 
-  <!-- Summarize -->
-  <div class="card">
-    <h2>Summarize Notes</h2>
-    <textarea id="notes" placeholder="Paste your notes here..."></textarea>
-    <button onclick="summarizeNotes()">Summarize</button>
-    <div id="summary" class="output"></div>
-  </div>
+<h2>✂️ Summarize Notes</h2>
+<textarea id="notes"></textarea>
+<button onclick="summarizeNotes()">Summarize</button>
+<div id="summary"></div>
 
-  <!-- Quiz -->
-  <div class="card">
-    <h2>Generate Quiz</h2>
-    <input id="topic" placeholder="Enter topic (eg. Physics)">
-    <button onclick="generateQuiz()">Generate</button>
-    <div id="quiz" class="output"></div>
-  </div>
-</div>
+<h2>📝 Quiz / Test</h2>
+<select id="quizType">
+  <option value="with_answer">Quiz with Answers</option>
+  <option value="test_mode">Test Mode</option>
+</select>
+<select id="questionCount">
+  <option value="5">5</option>
+  <option value="10">10</option>
+</select>
+<input id="quizTopic" placeholder="Topic">
+<button onclick="startQuiz()">Start</button>
+<pre id="quizArea"></pre>
+
+<h2>📄 PDF → Test</h2>
+<input type="file" id="pdfFile">
+<select id="pdfMode">
+  <option value="with_answer">With Answers</option>
+  <option value="test_mode">Test Mode</option>
+</select>
+<select id="pdfCount">
+  <option value="5">5</option>
+  <option value="10">10</option>
+</select>
+<button onclick="generatePdfTest()">Generate</button>
+<pre id="pdfQuiz"></pre>
+
+<h2>📊 Result Analytics</h2>
+<input id="totalQ" placeholder="Total Questions">
+<input id="correctQ" placeholder="Correct Answers">
+<button onclick="analyze()">Analyze</button>
+<pre id="resultBox"></pre>
 
 <script src="/static/script.js"></script>
 </body>
