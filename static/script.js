@@ -1,12 +1,12 @@
 async function askAI() {
   const q = question.value.trim();
-  answer.innerHTML = "Thinking...";
   if (!q) return;
+  answer.innerHTML = "Thinking...";
 
   try {
     const res = await fetch("/ask", {
       method: "POST",
-      headers: {"Content-Type":"application/json"},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({ question: q })
     });
     const data = await res.json();
@@ -21,7 +21,7 @@ async function generateQuiz() {
   try {
     const res = await fetch("/quiz", {
       method: "POST",
-      headers: {"Content-Type":"application/json"},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({ question: topic.value })
     });
     const data = await res.json();
@@ -36,7 +36,7 @@ async function summarizeNotes() {
   try {
     const res = await fetch("/summarize", {
       method: "POST",
-      headers: {"Content-Type":"application/json"},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify({ text: notes.value })
     });
     const data = await res.json();
