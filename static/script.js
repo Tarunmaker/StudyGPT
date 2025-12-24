@@ -1,49 +1,56 @@
-const chat = document.getElementById("chat");
-
 function show(id){
-  document.querySelectorAll(".panel").forEach(p=>p.classList.remove("show"));
-  document.getElementById(id).classList.add("show");
-  document.querySelectorAll(".nav").forEach(b=>b.classList.remove("active"));
-  event.target.classList.add("active");
+ document.querySelectorAll("section").forEach(s=>s.classList.remove("show"));
+ document.getElementById(id).classList.add("show");
 }
 
-function addMsg(text,type){
-  const d=document.createElement("div");
-  d.className=`msg ${type}`;
-  d.innerHTML=text.replace(/\n/g,"<br>");
-  chat.appendChild(d);
-  chat.scrollTop=chat.scrollHeight;
-}
-
+// ASK
 async function askAI(){
-  const q=document.getElementById("question").value.trim();
-  if(!q) return;
-  document.getElementById("question").value="";
-  addMsg(q,"user");
-  addMsg("Thinking…","ai");
-
-  const res=await fetch("/ask",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({question:q})
-  });
-  const data=await res.json();
-  chat.lastChild.remove();
-  addMsg(data.answer || "Error","ai");
+ const q=question.value;
+ chat.innerHTML+=`<div class='user'>${q}</div>`;
+ const r=await fetch("/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:q})});
+ const d=await r.json();
+ chat.innerHTML+=`<div class='ai'>${d.answer}</div>`;
 }
 
+// QUIZ
 async function startQuiz(){
-  const topic=document.getElementById("topic").value;
-  const mode=document.getElementById("mode").value;
-  const count=document.getElementById("count").value;
-  const box=document.getElementById("quizBox");
-  box.textContent="Preparing your practice…";
+ const r=await fetch("/quiz",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+   topic:quizTopic.value,mode:quizMode.value,count:quizCount.value
+ })});
+ quizBox.textContent=(await r.json()).quiz;
+}
 
-  const res=await fetch("/quiz",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({topic,mode,count})
-  });
-  const data=await res.json();
-  box.textContent=data.quiz || data.error;
+// REAL TEST
+let qs=[],i=0,score=0;
+async function startRealTest(){
+ const r=await fetch("/test",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
+   topic:testTopic.value,count:testCount.value
+ })});
+ qs=JSON.parse((await r.json()).mcqs);
+ i=0;score=0;showQ();
+}
+
+function showQ(){
+ const q=qs[i];
+ testBox.innerHTML=`<h3>${q.question}</h3>`+
+ q.options.map(o=>`<button onclick="check('${o}','${q.answer}',this)">${o}</button>`).join("");
+}
+
+function check(sel,ans,btn){
+ btn.style.background=sel==ans?"green":"red";
+ if(sel==ans)score++;
+ setTimeout(()=>{
+   i++;
+   if(i<qs.length)showQ();
+   else testBox.innerHTML=`<h2>Score: ${score}/${qs.length}</h2>`;
+ },700);
+}
+
+// PDF
+async function pdfTest(){
+ const f=new FormData();
+ f.append("pdf",pdfFile.files[0]);
+ f.append("count",pdfCount.value);
+ const r=await fetch("/pdf-test",{method:"POST",body:f});
+ pdfOut.textContent=(await r.json()).quiz;
 }
