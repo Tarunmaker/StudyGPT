@@ -1,64 +1,64 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8"/>
-  <title>StudyGPT — Your AI Teacher</title>
-  <link rel="stylesheet" href="/static/style.css"/>
+<title>StudyGPT</title>
+<link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
 <div class="app">
-  <!-- Sidebar -->
-  <aside class="side">
+  <aside>
     <h2>🎓 StudyGPT</h2>
-    <p class="tag">Your personal AI teacher</p>
-
-    <button class="nav active" onclick="show('ask')">🧠 Ask Doubt</button>
-    <button class="nav" onclick="show('quiz')">📝 Practice Quiz</button>
-
-    <div class="motivation">
-      <p>🔥 Keep going!</p>
-      <small>Daily practice = success</small>
-    </div>
+    <button onclick="show('ask')">Ask AI</button>
+    <button onclick="show('quiz')">Quiz</button>
+    <button onclick="show('test')">Real Test</button>
+    <button onclick="show('pdf')">PDF → Test</button>
   </aside>
 
-  <!-- Main -->
-  <main class="main">
+  <main>
     <!-- ASK -->
-    <section id="ask" class="panel show">
+    <section id="ask" class="show">
       <h1>Ask Your Doubt</h1>
-      <p class="sub">Explain like a friendly teacher</p>
-
-      <div class="chat">
-        <div id="chat"></div>
-      </div>
-
-      <div class="inputBar">
-        <textarea id="question" placeholder="Type your question…"></textarea>
-        <button onclick="askAI()">Send</button>
-      </div>
+      <div id="chat"></div>
+      <textarea id="question"></textarea>
+      <button onclick="askAI()">Ask</button>
     </section>
 
     <!-- QUIZ -->
-    <section id="quiz" class="panel">
-      <h1>Practice Quiz</h1>
-      <p class="sub">Learn → Practice → Improve</p>
+    <section id="quiz">
+      <h1>Quiz</h1>
+      <input id="quizTopic" placeholder="Topic">
+      <select id="quizMode">
+        <option value="with_answer">With Answers</option>
+        <option value="test">Test Mode</option>
+      </select>
+      <select id="quizCount">
+        <option>5</option><option>10</option>
+      </select>
+      <button onclick="startQuiz()">Generate</button>
+      <pre id="quizBox"></pre>
+    </section>
 
-      <div class="card">
-        <input id="topic" placeholder="Topic (e.g. Ohm’s Law)"/>
-        <div class="row">
-          <select id="mode">
-            <option value="with_answer">Quiz with Answers</option>
-            <option value="test_mode">Test Mode</option>
-          </select>
-          <select id="count">
-            <option>5</option><option>10</option><option>20</option>
-          </select>
-        </div>
-        <button class="primary" onclick="startQuiz()">Start</button>
-      </div>
+    <!-- REAL TEST -->
+    <section id="test">
+      <h1>Real Online Test</h1>
+      <input id="testTopic" placeholder="Topic">
+      <select id="testCount">
+        <option>5</option><option>10</option>
+      </select>
+      <button onclick="startRealTest()">Start Test</button>
+      <div id="testBox"></div>
+    </section>
 
-      <pre id="quizBox" class="output"></pre>
+    <!-- PDF -->
+    <section id="pdf">
+      <h1>PDF → Test</h1>
+      <input type="file" id="pdfFile">
+      <select id="pdfCount">
+        <option>5</option><option>10</option>
+      </select>
+      <button onclick="pdfTest()">Generate</button>
+      <pre id="pdfOut"></pre>
     </section>
   </main>
 </div>
