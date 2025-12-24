@@ -1,91 +1,25 @@
 body {
-  margin: 0;
-  background: #f7f7f8;
-  font-family: "Segoe UI", system-ui, sans-serif;
-  color: #222;
-}
-
-.container {
-  max-width: 850px;
-  margin: auto;
-  padding: 30px 15px 80px;
-}
-
-h1 {
-  text-align: center;
-  margin-bottom: 5px;
-}
-
-.tagline {
-  text-align: center;
-  color: #666;
-  margin-bottom: 30px;
-}
-
-/* Card */
-.card {
-  background: #ffffff;
-  border-radius: 12px;
+  font-family: Arial;
+  background: #f4f6f8;
   padding: 20px;
-  margin-bottom: 25px;
-  box-shadow: 0 4px 14px rgba(0,0,0,0.08);
 }
 
-.card h2 {
-  margin-top: 0;
-  margin-bottom: 12px;
-}
-
-/* Inputs */
-textarea, input {
+textarea, input, select {
   width: 100%;
-  padding: 12px;
-  font-size: 15px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  outline: none;
-  margin-bottom: 10px;
+  margin: 8px 0;
+  padding: 10px;
 }
 
-textarea {
-  min-height: 110px;
-  resize: vertical;
-}
-
-textarea:focus, input:focus {
-  border-color: #19c37d;
-}
-
-/* Button */
 button {
-  background: #19c37d;
+  padding: 10px;
+  background: #0d6efd;
+  color: white;
   border: none;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 15px;
   cursor: pointer;
-  color: #000;
 }
 
-button:hover {
-  background: #16a96c;
-}
-
-/* Output */
-.output {
-  margin-top: 15px;
-  background: #f1f1f1;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 14.5px;
-  line-height: 1.5;
-}
-
-.output p {
-  margin: 0;
-}
-
-.output b {
-  display: block;
-  margin-bottom: 6px;
+pre {
+  background: white;
+  padding: 15px;
+  white-space: pre-wrap;
 }
