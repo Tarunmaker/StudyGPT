@@ -2,24 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>StudyGPT</title>
+  <title>AI Study Helper</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<div class="app">
-  <div class="sidebar">
-    <h2>📚 StudyGPT</h2>
-    <button onclick="clearChat()">🗑 Clear Chat</button>
+<div class="container">
+  <h1>🧠 AI Study Helper</h1>
+  <p class="tagline">
+    Your personal AI tutor for explaining, summarizing, and testing.
+  </p>
+
+  <!-- Ask AI -->
+  <div class="card">
+    <h2>Ask AI (Explain)</h2>
+    <textarea id="question" placeholder="Ask something..."></textarea>
+    <button onclick="askAI()">Explain</button>
+    <div id="answer" class="output"></div>
   </div>
 
-  <div class="chat-container">
-    <div id="chat" class="chat-box"></div>
+  <!-- Summarize -->
+  <div class="card">
+    <h2>Summarize Notes</h2>
+    <textarea id="notes" placeholder="Paste your notes here..."></textarea>
+    <button onclick="summarizeNotes()">Summarize</button>
+    <div id="summary" class="output"></div>
+  </div>
 
-    <div class="input-box">
-      <textarea id="question" placeholder="Ask anything..."></textarea>
-      <button onclick="askAI()">Send</button>
-    </div>
+  <!-- Quiz -->
+  <div class="card">
+    <h2>Generate Quiz</h2>
+    <input id="topic" placeholder="Enter topic (eg. Physics)">
+    <button onclick="generateQuiz()">Generate</button>
+    <div id="quiz" class="output"></div>
   </div>
 </div>
 
