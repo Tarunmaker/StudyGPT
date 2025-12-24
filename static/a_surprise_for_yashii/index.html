@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday Yashii 🎂</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@400;600&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+      font-family: 'Poppins', sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .page {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      transition: opacity 1s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    h1 {
+      font-family: 'Pacifico', cursive;
+      color: #fff;
+      font-size: 3rem;
+      text-shadow: 0 0 15px rgba(255,255,255,0.7);
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #fff; }
+      to { text-shadow: 0 0 20px #ff6b6b, 0 0 40px #ff6b6b; }
+    }
+
+    h2 {
+      color: #fff;
+      margin-top: 15px;
+      font-size: 1.3rem;
+      width: 80%;
+    }
+
+    button {
+      margin-top: 25px;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 25px;
+      background: white;
+      color: #ff6b6b;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s;
+      box-shadow: 0 0 10px rgba(255,255,255,0.4);
+    }
+
+    button:hover {
+      background: #ff6b6b;
+      color: #fff;
+      transform: scale(1.05);
+    }
+
+    .heart {
+      position: absolute;
+      color: rgba(255,255,255,0.7);
+      font-size: 20px;
+      animation: floatHeart 6s linear infinite;
+    }
+
+    @keyframes floatHeart {
+      0% {transform: translateY(100vh) scale(1);}
+      100% {transform: translateY(-10vh) scale(1.5); opacity: 0;}
+    }
+
+    #noBtn {
+      position: relative;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 10px;
+      color: white;
+      opacity: 0.8;
+      font-size: 0.9rem;
+    }
+
+    textarea {
+      resize: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Page 1 -->
+  <div id="page1" class="page active">
+    <h1>Happy Birthday Yashii 🎉</h1>
+    <h2>May your special day be filled with happiness, laughter & sweet memories 💖</h2>
+    <button onclick="openSurprise()">Open Surprise 🎁</button>
+  </div>
+
+  <!-- Friendship Page -->
+  <div id="friendPage" class="page">
+    <h1>Can we be Friends Forever? 💕</h1>
+    <div style="margin-top: 20px;">
+      <button id="yesBtn" onclick="sayYes()">Yes 💞</button>
+      <button id="noBtn" onmouseover="moveNo()">No 😜</button>
+    </div>
+  </div>
+
+  <!-- Thank You Page -->
+  <div id="thankPage" class="page">
+    <h1>Thank You, Yashii 💕</h1>
+    <h2>You made my first wish for you so special 🥺💗<br>Our friendship means everything to me 🌈</h2>
+
+    <h3 style="color:white;margin-top:30px;">💌 Want to leave a message for me?</h3>
+    <textarea id="msgBox" placeholder="Type your message here..."
+      style="width:80%;max-width:400px;height:100px;border-radius:15px;padding:10px;border:none;outline:none;font-size:1rem;"></textarea><br><br>
+    <button onclick="sendMessage()">Send Message 💌</button>
+  </div>
+
+  <footer>Made with ❤️ by Tarun | Code by Tarun 💻</footer>
+
+  <audio id="music" src="https://cdn.pixabay.com/download/audio/2022/10/20/audio_9b9f35b8e3.mp3?filename=birthday-song-12464.mp3"></audio>
+
+  <script>
+    // Floating hearts
+    function createHearts() {
+      const heart = document.createElement('div');
+      heart.classList.add('heart');
+      heart.innerHTML = '💖';
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.animationDuration = (4 + Math.random() * 4) + 's';
+      heart.style.fontSize = (10 + Math.random() * 20) + 'px';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), 6000);
+    }
+    setInterval(createHearts, 400);
+
+    const page1 = document.getElementById('page1');
+    const friendPage = document.getElementById('friendPage');
+    const thankPage = document.getElementById('thankPage');
+
+    function openSurprise() {
+      document.getElementById('music').play();
+      page1.classList.remove('active');
+      setTimeout(() => friendPage.classList.add('active'), 500);
+    }
+
+    function moveNo() {
+      const noBtn = document.getElementById('noBtn');
+      const x = Math.random() * (window.innerWidth - 100);
+      const y = Math.random() * (window.innerHeight - 200);
+      noBtn.style.position = 'absolute';
+      noBtn.style.left = x + 'px';
+      noBtn.style.top = y + 'px';
+    }
+
+    function sayYes() {
+      friendPage.classList.remove('active');
+      setTimeout(() => {
+        thankPage.classList.add('active');
+        for (let i = 0; i < 30; i++) {
+          setTimeout(createHearts, i * 100);
+        }
+      }, 800);
+    }
+
+    function sendMessage(){
+      const msg = document.getElementById("msgBox").value.trim();
+      if(!msg){ alert("Please write something before sending 💬"); return; }
+
+      const subject = encodeURIComponent("Message from Yashii 💖");
+      const body = encodeURIComponent(msg);
+      const mailtoLink = `https://mail.google.com/mail/?view=cm&fs=1&to=tarunsinghpancham2009@gmail.com&su=${subject}&body=${body}`;
+      window.open(mailtoLink, "_blank");
+    }
+  </script>
+</body>
+</html>

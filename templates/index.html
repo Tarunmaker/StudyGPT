@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Study Helper</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🧠 AI Study Helper</h1>
+    <p>Your personal AI tutor for explaining, summarizing, and testing!</p>
+
+    <div class="section">
+      <h2>1️⃣ Ask AI (Explain)</h2>
+      <textarea id="question" placeholder="Enter your question..."></textarea>
+      <button onclick="askAI()">Explain</button>
+      <div id="answer"></div>
+    </div>
+
+    <div class="section">
+      <h2>2️⃣ Summarize Notes</h2>
+      <textarea id="notes" placeholder="Paste your notes..."></textarea>
+      <button onclick="summarizeNotes()">Summarize</button>
+      <div id="summary"></div>
+    </div>
+
+    <div class="section">
+      <h2>3️⃣ Generate Quiz</h2>
+      <input id="topic" placeholder="Enter topic (e.g., Ohm's Law)" />
+      <button onclick="generateQuiz()">Generate Quiz</button>
+      <div id="quiz"></div>
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
