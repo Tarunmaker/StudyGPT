@@ -8,3 +8,42 @@ section.show{display:block}
 .user{background:#2a5cff;padding:10px;margin:5px;border-radius:8px}
 .ai{background:#2b3166;padding:10px;margin:5px;border-radius:8px}
 button{cursor:pointer}
+body {
+  font-family: Arial, sans-serif;
+  background: #f4f6fa;
+  padding: 20px;
+}
+
+h1 { color: #2b4eff; }
+.tag { color: gray; }
+
+section {
+  background: white;
+  padding: 15px;
+  margin: 15px 0;
+  border-radius: 8px;
+}
+
+textarea, input {
+  width: 100%;
+  padding: 10px;
+  margin: 8px 0;
+}
+
+button {
+  background: #2b4eff;
+  color: white;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.option {
+  border: 1px solid #ccc;
+  padding: 8px;
+  margin: 5px 0;
+  cursor: pointer;
+}
+
+.correct { background: #c8f7c5; }
+.wrong { background: #f7c5c5; }
