@@ -1,67 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>StudyGPT</title>
-<link rel="stylesheet" href="/static/style.css">
+  <title>StudyGPT</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<div class="app">
-  <aside>
-    <h2>🎓 StudyGPT</h2>
-    <button onclick="show('ask')">Ask AI</button>
-    <button onclick="show('quiz')">Quiz</button>
-    <button onclick="show('test')">Real Test</button>
-    <button onclick="show('pdf')">PDF → Test</button>
-  </aside>
+<h1>📘 StudyGPT</h1>
+<p class="tag">Your AI Teacher & Test Partner</p>
 
-  <main>
-    <!-- ASK -->
-    <section id="ask" class="show">
-      <h1>Ask Your Doubt</h1>
-      <div id="chat"></div>
-      <textarea id="question"></textarea>
-      <button onclick="askAI()">Ask</button>
-    </section>
+<!-- ASK AI -->
+<section>
+  <h2>Ask AI</h2>
+  <textarea id="question" placeholder="Ask any question..."></textarea>
+  <button onclick="askAI()">Explain</button>
+  <div id="answer"></div>
+</section>
 
-    <!-- QUIZ -->
-    <section id="quiz">
-      <h1>Quiz</h1>
-      <input id="quizTopic" placeholder="Topic">
-      <select id="quizMode">
-        <option value="with_answer">With Answers</option>
-        <option value="test">Test Mode</option>
-      </select>
-      <select id="quizCount">
-        <option>5</option><option>10</option>
-      </select>
-      <button onclick="startQuiz()">Generate</button>
-      <pre id="quizBox"></pre>
-    </section>
+<!-- QUIZ -->
+<section>
+  <h2>Practice Quiz (With Answer)</h2>
+  <input id="topic" placeholder="Enter topic">
+  <button onclick="generateQuiz()">Generate Quiz</button>
+  <div id="quiz"></div>
+</section>
 
-    <!-- REAL TEST -->
-    <section id="test">
-      <h1>Real Online Test</h1>
-      <input id="testTopic" placeholder="Topic">
-      <select id="testCount">
-        <option>5</option><option>10</option>
-      </select>
-      <button onclick="startRealTest()">Start Test</button>
-      <div id="testBox"></div>
-    </section>
-
-    <!-- PDF -->
-    <section id="pdf">
-      <h1>PDF → Test</h1>
-      <input type="file" id="pdfFile">
-      <select id="pdfCount">
-        <option>5</option><option>10</option>
-      </select>
-      <button onclick="pdfTest()">Generate</button>
-      <pre id="pdfOut"></pre>
-    </section>
-  </main>
-</div>
+<!-- TEST MODE -->
+<section>
+  <h2>📝 Real Test Mode</h2>
+  <input id="testTopic" placeholder="Test topic">
+  <button onclick="startTest()">Start Test</button>
+  <div id="testBox"></div>
+</section>
 
 <script src="/static/script.js"></script>
 </body>
