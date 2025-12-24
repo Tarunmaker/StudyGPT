@@ -1,57 +1,47 @@
 async function askAI() {
-  const q = question.value;
+  const q = question.value.trim();
   answer.innerHTML = "Thinking...";
-  const r = await fetch("/ask", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({question:q})
-  });
-  const d = await r.json();
-  answer.innerHTML = d.answer || d.error;
+  if (!q) return;
+
+  try {
+    const res = await fetch("/ask", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ question: q })
+    });
+    const data = await res.json();
+    answer.innerHTML = data.answer || data.error;
+  } catch {
+    answer.innerHTML = "Server error";
+  }
 }
 
 async function generateQuiz() {
-  quiz.innerHTML = "Generating...";
-  const r = await fetch("/quiz", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({question:topic.value})
-  });
-  const d = await r.json();
-  quiz.innerHTML = d.answer;
+  quiz.innerHTML = "Generating quiz...";
+  try {
+    const res = await fetch("/quiz", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ question: topic.value })
+    });
+    const data = await res.json();
+    quiz.innerHTML = data.answer || data.error;
+  } catch {
+    quiz.innerHTML = "Server error";
+  }
 }
 
-async function startTest() {
-  testBox.innerHTML = "Loading test...";
-  const r = await fetch("/test", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({topic:testTopic.value})
-  });
-  const d = await r.json();
-  const data = JSON.parse(d.test);
-
-  let score = 0;
-  testBox.innerHTML = "";
-
-  data.forEach((q,i)=>{
-    const div = document.createElement("div");
-    div.innerHTML = `<b>Q${i+1}. ${q.q}</b>`;
-    q.options.forEach(opt=>{
-      const o = document.createElement("div");
-      o.className="option";
-      o.innerText=opt;
-      o.onclick=()=>{
-        if(opt===q.answer){
-          o.classList.add("correct"); score++;
-        } else o.classList.add("wrong");
-      };
-      div.appendChild(o);
+async function summarizeNotes() {
+  summary.innerHTML = "Summarizing...";
+  try {
+    const res = await fetch("/summarize", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({ text: notes.value })
     });
-    testBox.appendChild(div);
-  });
-
-  setTimeout(()=>{
-    alert("Test finished! Score: "+score+"/"+data.length);
-  },500);
+    const data = await res.json();
+    summary.innerHTML = data.summary || data.error;
+  } catch {
+    summary.innerHTML = "Server error";
+  }
 }
