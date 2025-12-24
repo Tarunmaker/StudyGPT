@@ -1,56 +1,57 @@
-function show(id){
- document.querySelectorAll("section").forEach(s=>s.classList.remove("show"));
- document.getElementById(id).classList.add("show");
+async function askAI() {
+  const q = question.value;
+  answer.innerHTML = "Thinking...";
+  const r = await fetch("/ask", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({question:q})
+  });
+  const d = await r.json();
+  answer.innerHTML = d.answer || d.error;
 }
 
-// ASK
-async function askAI(){
- const q=question.value;
- chat.innerHTML+=`<div class='user'>${q}</div>`;
- const r=await fetch("/ask",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({question:q})});
- const d=await r.json();
- chat.innerHTML+=`<div class='ai'>${d.answer}</div>`;
+async function generateQuiz() {
+  quiz.innerHTML = "Generating...";
+  const r = await fetch("/quiz", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({question:topic.value})
+  });
+  const d = await r.json();
+  quiz.innerHTML = d.answer;
 }
 
-// QUIZ
-async function startQuiz(){
- const r=await fetch("/quiz",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
-   topic:quizTopic.value,mode:quizMode.value,count:quizCount.value
- })});
- quizBox.textContent=(await r.json()).quiz;
-}
+async function startTest() {
+  testBox.innerHTML = "Loading test...";
+  const r = await fetch("/test", {
+    method: "POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({topic:testTopic.value})
+  });
+  const d = await r.json();
+  const data = JSON.parse(d.test);
 
-// REAL TEST
-let qs=[],i=0,score=0;
-async function startRealTest(){
- const r=await fetch("/test",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({
-   topic:testTopic.value,count:testCount.value
- })});
- qs=JSON.parse((await r.json()).mcqs);
- i=0;score=0;showQ();
-}
+  let score = 0;
+  testBox.innerHTML = "";
 
-function showQ(){
- const q=qs[i];
- testBox.innerHTML=`<h3>${q.question}</h3>`+
- q.options.map(o=>`<button onclick="check('${o}','${q.answer}',this)">${o}</button>`).join("");
-}
+  data.forEach((q,i)=>{
+    const div = document.createElement("div");
+    div.innerHTML = `<b>Q${i+1}. ${q.q}</b>`;
+    q.options.forEach(opt=>{
+      const o = document.createElement("div");
+      o.className="option";
+      o.innerText=opt;
+      o.onclick=()=>{
+        if(opt===q.answer){
+          o.classList.add("correct"); score++;
+        } else o.classList.add("wrong");
+      };
+      div.appendChild(o);
+    });
+    testBox.appendChild(div);
+  });
 
-function check(sel,ans,btn){
- btn.style.background=sel==ans?"green":"red";
- if(sel==ans)score++;
- setTimeout(()=>{
-   i++;
-   if(i<qs.length)showQ();
-   else testBox.innerHTML=`<h2>Score: ${score}/${qs.length}</h2>`;
- },700);
-}
-
-// PDF
-async function pdfTest(){
- const f=new FormData();
- f.append("pdf",pdfFile.files[0]);
- f.append("count",pdfCount.value);
- const r=await fetch("/pdf-test",{method:"POST",body:f});
- pdfOut.textContent=(await r.json()).quiz;
+  setTimeout(()=>{
+    alert("Test finished! Score: "+score+"/"+data.length);
+  },500);
 }
