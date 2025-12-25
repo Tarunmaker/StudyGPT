@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>StudyGPT</title>
-  <link rel="stylesheet" href="/static/style.css">
+<title>StudyGPT</title>
+<link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
@@ -10,34 +10,41 @@
 
 <header>
   <h1>StudyGPT</h1>
-  <p>Your AI Study Partner</p>
+  <p>Your AI Teacher & Exam Partner</p>
 </header>
 
-<section class="card">
+<section class="card animate">
   <h3>Ask AI</h3>
-  <textarea id="question" placeholder="Ask your doubt..."></textarea>
-  <button onclick="askAI()">Explain</button>
+  <textarea id="question"></textarea>
+  <button onclick="askAI()">Ask</button>
   <div id="answer" class="output"></div>
 </section>
 
-<section class="card">
-  <h3>Practice Quiz</h3>
-  <input id="topic" placeholder="Enter topic">
+<section class="card animate">
+  <h3>Quiz Generator</h3>
+  <input id="topic">
   <button onclick="generateQuiz()">Generate</button>
   <div id="quiz" class="output"></div>
 </section>
 
-<section class="card">
+<section class="card animate">
+  <h3>Real MCQ Test</h3>
+  <input id="testTopic">
+  <button onclick="startRealTest()">Start Test</button>
+  <div id="testArea" class="output"></div>
+</section>
+
+<section class="card animate">
   <h3>PDF → Test</h3>
   <input type="file" id="pdfFile">
-  <button onclick="pdfTest()">Generate Test</button>
+  <button onclick="pdfTest()">Generate</button>
   <div id="pdfOut" class="output"></div>
 </section>
 
-<section class="card">
-  <h3>Student Dashboard</h3>
-  <button onclick="loadDashboard()">View Stats</button>
-  <div id="dash" class="output"></div>
+<section class="card animate">
+  <h3>Test History</h3>
+  <button onclick="showHistory()">View</button>
+  <div id="historyBox" class="output"></div>
 </section>
 
 <script src="/static/script.js"></script>
