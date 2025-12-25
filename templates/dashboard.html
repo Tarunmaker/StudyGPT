@@ -1,11 +1,35 @@
-<h1>📊 Student Dashboard</h1>
-<p>Name: <span id="name"></span></p>
-<p>Level: <span id="level"></span></p>
-<p>XP: <span id="xp"></span></p>
-<p>Questions: <span id="questions"></span></p>
-<p>Tests: <span id="tests"></span></p>
-<p>Premium: <span id="premium"></span></p>
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="/static/style.css">
+<script src="/static/script.js"></script>
+</head>
+<body>
 
-<a href="/">⬅ Back</a>
+<h2>Welcome to StudyGPT Dashboard</h2>
 
-<script src="/static/dashboard.js"></script>
+<section>
+<h3>Ask AI</h3>
+<input id="question">
+<button onclick="askAI()">Ask</button>
+<div id="answer"></div>
+</section>
+
+<section>
+<h3>MCQ Test</h3>
+<input id="topic" placeholder="Topic">
+<input id="count" type="number" value="5">
+<button onclick="startTest()">Start Test</button>
+<div id="test"></div>
+</section>
+
+<section>
+<h3>History</h3>
+{% for h in history %}
+<p>{{h.score}} / {{h.total}} → {{h.percent}}%</p>
+{% endfor %}
+</section>
+
+<a href="/logout">Logout</a>
+</body>
+</html>
