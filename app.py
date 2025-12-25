@@ -1,150 +1,139 @@
-from flask import Flask, render_template, request, jsonify, redirect, session
-from werkzeug.utils import secure_filename
-from PyPDF2 import PdfReader
-import os, random, datetime
+from flask import Flask, render_template, request, jsonify, session, redirect
+from flask_cors import CORS
+from openai import OpenAI
+import os
 
 app = Flask(__name__)
-app.secret_key = "studygpt_secret_key"
+app.secret_key = "studygpt_teacher_secret"
+CORS(app)
 
-# ---------------- CONFIG ----------------
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-# ---------------- DUMMY DATABASE ----------------
-USERS = {
-    "student": "1234"
-}
+USERS = {}
+PROGRESS = {}   # email -> stats
 
-TEST_HISTORY = []   # [{date, score, total, percent}]
-
-# ---------------- LOGIN ----------------
-@app.route("/", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-
-        if USERS.get(username) == password:
-            session["user"] = username
-            return redirect("/dashboard")
-
-        return render_template("login.html", error="Invalid credentials")
-
+# ---------- AUTH ----------
+@app.route("/")
+def login_page():
+    if "user" in session:
+        return redirect("/dashboard")
     return render_template("login.html")
 
-# ---------------- LOGOUT ----------------
+@app.route("/login", methods=["POST"])
+def login():
+    email = request.form["email"]
+    password = request.form["password"]
+
+    if email in USERS and USERS[email] == password:
+        session["user"] = email
+        PROGRESS.setdefault(email, {
+            "ask": 0,
+            "quiz": 0,
+            "exam": 0
+        })
+        return redirect("/dashboard")
+    return "Invalid login"
+
+@app.route("/signup", methods=["POST"])
+def signup():
+    email = request.form["email"]
+    password = request.form["password"]
+    USERS[email] = password
+    session["user"] = email
+    PROGRESS[email] = {"ask": 0, "quiz": 0, "exam": 0}
+    return redirect("/dashboard")
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-# ---------------- DASHBOARD ----------------
+# ---------- DASHBOARD ----------
 @app.route("/dashboard")
 def dashboard():
     if "user" not in session:
         return redirect("/")
-    return render_template("dashboard.html", history=TEST_HISTORY)
-
-# ---------------- ASK AI ----------------
-@app.route("/ask", methods=["POST"])
-def ask_ai():
-    data = request.json
-    question = data.get("question", "").strip()
-
-    if not question:
-        return jsonify({"error": "Question required"})
-
-    answer = f"""
-👨‍🏫 Teacher Explanation
-
-Your question: {question}
-
-• Break the concept into basics  
-• Understand definitions  
-• Practice examples  
-
-📌 Tip: Revise again tomorrow for better retention.
-"""
-    return jsonify({"answer": answer.strip()})
-
-# ---------------- GENERATE MCQ TEST ----------------
-@app.route("/generate-test", methods=["POST"])
-def generate_test():
-    data = request.json
-    topic = data.get("topic", "General")
-    count = int(data.get("count", 5))
-
-    questions = []
-    for i in range(count):
-        correct = random.randint(0, 3)
-        questions.append({
-            "question": f"{topic} Question {i+1}",
-            "options": ["Option A", "Option B", "Option C", "Option D"],
-            "correct": correct
-        })
-
-    return jsonify({"questions": questions})
-
-# ---------------- SUBMIT TEST ----------------
-@app.route("/submit-test", methods=["POST"])
-def submit_test():
-    data = request.json
-    questions = data.get("questions", [])
-    answers = data.get("answers", [])
-
-    score = 0
-    for i, q in enumerate(questions):
-        if i < len(answers) and answers[i] == q["correct"]:
-            score += 1
-
-    total = len(questions)
-    percent = round((score / total) * 100, 2) if total else 0
-
-    TEST_HISTORY.append({
-        "date": datetime.datetime.now().strftime("%d %b %Y %H:%M"),
-        "score": score,
-        "total": total,
-        "percent": percent
-    })
-
-    guidance = (
-        "🌟 Excellent work! Try advanced questions."
-        if percent >= 80 else
-        "👍 Good attempt. Revise weak areas."
-        if percent >= 50 else
-        "⚠️ Start from basics and practice daily."
+    return render_template(
+        "dashboard.html",
+        user=session["user"],
+        progress=PROGRESS.get(session["user"], {})
     )
 
-    return jsonify({
-        "score": score,
-        "total": total,
-        "percent": percent,
-        "guidance": guidance
-    })
+# ---------- ASK AI ----------
+@app.route("/ask", methods=["POST"])
+def ask_ai():
+    q = request.json["question"]
+    PROGRESS[session["user"]]["ask"] += 1
 
-# ---------------- PDF → TEST (SAFE) ----------------
-@app.route("/pdf-test", methods=["POST"])
-def pdf_test():
-    file = request.files.get("pdf")
-    if not file:
-        return jsonify({"error": "No PDF uploaded"})
+    res = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "You are a professional teacher. Explain step-by-step, exam-focused."
+            },
+            {"role": "user", "content": q}
+        ]
+    )
+    return jsonify(answer=res.choices[0].message.content)
 
-    filename = secure_filename(file.filename)
-    path = os.path.join(UPLOAD_FOLDER, filename)
-    file.save(path)
+# ---------- SUMMARIZE ----------
+@app.route("/summarize", methods=["POST"])
+def summarize():
+    text = request.json["text"]
 
-    reader = PdfReader(path)
-    text = ""
-    for page in reader.pages:
-        if page.extract_text():
-            text += page.extract_text()
+    res = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "Summarize notes for exam preparation in short clear points."
+            },
+            {"role": "user", "content": text}
+        ]
+    )
+    return jsonify(summary=res.choices[0].message.content)
 
-    return jsonify({
-        "message": "PDF uploaded successfully",
-        "preview": text[:300]
-    })
+# ---------- QUIZ MODE ----------
+@app.route("/quiz", methods=["POST"])
+def quiz():
+    topic = request.json["topic"]
+    PROGRESS[session["user"]]["quiz"] += 1
 
-# ---------------- RUN ----------------
+    res = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": "Create 5 exam-oriented revision questions with answers."
+            },
+            {"role": "user", "content": topic}
+        ]
+    )
+    return jsonify(result=res.choices[0].message.content)
+
+# ---------- EXAM / FOCUS MODE ----------
+@app.route("/exam", methods=["POST"])
+def exam_mode():
+    topic = request.json["topic"]
+    PROGRESS[session["user"]]["exam"] += 1
+
+    res = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "You are a strict exam tutor. Ask questions one by one. "
+                    "Guide thinking process. Do not reveal full answers immediately. "
+                    "Focus on accuracy, time management, and common mistakes."
+                )
+            },
+            {"role": "user", "content": topic}
+        ]
+    )
+    return jsonify(result=res.choices[0].message.content)
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
