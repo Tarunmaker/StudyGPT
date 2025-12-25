@@ -62,3 +62,27 @@ def summarize():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+# ---------- REAL TEST ----------
+@app.route("/test", methods=["POST"])
+def test():
+    topic = request.json.get("topic","").strip()
+    if not topic:
+        return jsonify({"error":"Topic required"})
+
+    prompt = f"""
+Create 5 MCQs on {topic}.
+Return STRICT JSON like:
+[
+  {{
+    "q":"question",
+    "options":["A","B","C","D"],
+    "answer":"A"
+  }}
+]
+"""
+
+    res = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role":"user","content":prompt}]
+    )
+    return jsonify({"test": res.choices[0].message.content})
