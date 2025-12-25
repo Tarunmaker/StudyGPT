@@ -2,4 +2,4 @@ flask
 flask-cors
 openai
 gunicorn
-pypdf
+PyPDF2
