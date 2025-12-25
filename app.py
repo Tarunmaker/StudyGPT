@@ -9,84 +9,87 @@ CORS(app)
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# student stats (simple)
-stats = {
-    "questions": 0,
-    "quizzes": 0,
-    "pdf_tests": 0
-}
-
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# -------- ASK AI --------
+# ---------- ASK AI ----------
 @app.route("/ask", methods=["POST"])
 def ask():
-    q = request.json.get("question", "").strip()
+    q = request.json.get("question","").strip()
     if not q:
-        return jsonify({"error": "Question required"})
-
-    stats["questions"] += 1
+        return jsonify({"error":"Question required"})
 
     res = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
-            {"role": "system", "content": "You are a professional teacher. Explain clearly."},
-            {"role": "user", "content": q}
+            {"role":"system","content":"You are a professional teacher. Explain step by step."},
+            {"role":"user","content":q}
         ]
     )
-    return jsonify({"answer": res.choices[0].message.content})
+    return jsonify({"answer":res.choices[0].message.content})
 
-# -------- QUIZ --------
+# ---------- QUIZ ----------
 @app.route("/quiz", methods=["POST"])
 def quiz():
-    topic = request.json.get("topic", "").strip()
+    topic = request.json.get("topic","").strip()
     if not topic:
-        return jsonify({"error": "Topic required"})
-
-    stats["quizzes"] += 1
+        return jsonify({"error":"Topic required"})
 
     prompt = f"""
-Create 5 MCQs on "{topic}".
-Give options, correct answer and short explanation.
+Create 5 MCQs on {topic}.
+Give options, correct answer and explanation.
 """
     res = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}]
+        messages=[{"role":"user","content":prompt}]
     )
-    return jsonify({"quiz": res.choices[0].message.content})
+    return jsonify({"quiz":res.choices[0].message.content})
 
-# -------- PDF TO TEST --------
+# ---------- REAL TEST ----------
+@app.route("/real-test", methods=["POST"])
+def real_test():
+    topic = request.json.get("topic","")
+
+    prompt = f"""
+Create 5 MCQs on {topic}.
+Return STRICT JSON ONLY:
+[
+  {{
+    "q":"Question",
+    "options":["A","B","C","D"],
+    "answer":"A"
+  }}
+]
+"""
+    res = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role":"user","content":prompt}]
+    )
+    return jsonify({"questions":res.choices[0].message.content})
+
+# ---------- PDF TO TEST ----------
 @app.route("/pdf-test", methods=["POST"])
 def pdf_test():
     pdf = request.files.get("pdf")
     if not pdf:
-        return jsonify({"error": "No PDF uploaded"})
-
-    stats["pdf_tests"] += 1
+        return jsonify({"error":"No PDF uploaded"})
 
     reader = PdfReader(pdf)
-    text = ""
-    for page in reader.pages:
-        if page.extract_text():
-            text += page.extract_text()
+    text=""
+    for p in reader.pages:
+        if p.extract_text():
+            text+=p.extract_text()
 
     prompt = f"""
-Create 5 MCQs from the following content:
+Create 5 MCQs from this content:
 {text[:3000]}
 """
-
     res = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
-        messages=[{"role": "user", "content": prompt}]
+        messages=[{"role":"user","content":prompt}]
     )
-    return jsonify({"quiz": res.choices[0].message.content})
-
-# -------- DASHBOARD --------
-@app.route("/dashboard")
-def dashboard():
-    return jsonify(stats)
+    return jsonify({"quiz":res.choices[0].message.content})
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+    app.run(debug=True)
