@@ -1,35 +1,53 @@
 <!DOCTYPE html>
 <html>
 <head>
-<link rel="stylesheet" href="/static/style.css">
-<script src="/static/script.js"></script>
+  <title>StudyGPT – Teacher Mode</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/script.js" defer></script>
 </head>
-<body>
+<body class="dashboard">
 
-<h2>Welcome to StudyGPT Dashboard</h2>
+<header class="top">
+  <h2>StudyGPT – Teacher Mode</h2>
+  <div>
+    <button onclick="toggleDark()">🌙 Focus</button>
+    <a href="/logout">Logout</a>
+  </div>
+</header>
 
-<section>
-<h3>Ask AI</h3>
-<input id="question">
-<button onclick="askAI()">Ask</button>
-<div id="answer"></div>
+<section class="stats">
+  <div>Ask AI: {{progress.ask}}</div>
+  <div>Quiz: {{progress.quiz}}</div>
+  <div>Exam Mode: {{progress.exam}}</div>
 </section>
 
-<section>
-<h3>MCQ Test</h3>
-<input id="topic" placeholder="Topic">
-<input id="count" type="number" value="5">
-<button onclick="startTest()">Start Test</button>
-<div id="test"></div>
+<section class="card">
+  <h3>Ask AI</h3>
+  <textarea id="question"></textarea>
+  <button onclick="askAI()">Explain</button>
+  <div id="answer"></div>
 </section>
 
-<section>
-<h3>History</h3>
-{% for h in history %}
-<p>{{h.score}} / {{h.total}} → {{h.percent}}%</p>
-{% endfor %}
+<section class="card">
+  <h3>Summarize Notes</h3>
+  <textarea id="notes"></textarea>
+  <button onclick="summarizeNotes()">Summarize</button>
+  <div id="summary"></div>
 </section>
 
-<a href="/logout">Logout</a>
+<section class="card">
+  <h3>Quiz Mode</h3>
+  <input id="quizTopic" placeholder="Topic">
+  <button onclick="startQuiz()">Start Quiz</button>
+  <div id="quizResult"></div>
+</section>
+
+<section class="card exam">
+  <h3>🎯 Exam / Focus Mode</h3>
+  <input id="examTopic" placeholder="Exam topic">
+  <button onclick="startExam()">Start Exam</button>
+  <div id="examResult"></div>
+</section>
+
 </body>
 </html>
