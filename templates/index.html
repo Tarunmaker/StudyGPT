@@ -6,39 +6,30 @@
 </head>
 <body>
 
-<div class="chat-container">
-  <div class="chat-header">StudyGPT</div>
+<h1>🧠 StudyGPT</h1>
+<p>Your AI study helper</p>
 
-  <div id="chat" class="chat-body"></div>
+<hr>
 
-  <div class="chat-input">
-    <input id="input" placeholder="Ask anything…" />
-    <button onclick="send()">➤</button>
-  </div>
-</div>
+<h2>Ask AI</h2>
+<textarea id="question" placeholder="Ask your doubt..."></textarea>
+<button onclick="askAI()">Ask</button>
+<div id="answer"></div>
 
-<script>
-async function send(){
-  const input = document.getElementById("input");
-  const chat = document.getElementById("chat");
+<hr>
 
-  if(!input.value) return;
+<h2>Quiz Generator</h2>
+<input id="quizTopic" placeholder="Enter topic">
+<button onclick="generateQuiz()">Generate Quiz</button>
+<div id="quiz"></div>
 
-  chat.innerHTML += `<div class="msg user">${input.value}</div>`;
-  const text = input.value;
-  input.value = "";
+<hr>
 
-  const res = await fetch("/chat",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({message:text})
-  });
+<h2>Summarize Notes</h2>
+<textarea id="notes" placeholder="Paste your notes here..."></textarea>
+<button onclick="summarizeNotes()">Summarize</button>
+<div id="summary"></div>
 
-  const data = await res.json();
-  chat.innerHTML += `<div class="msg bot">${data.reply}</div>`;
-  chat.scrollTop = chat.scrollHeight;
-}
-</script>
-
+<script src="/static/script.js"></script>
 </body>
 </html>
