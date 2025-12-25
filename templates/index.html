@@ -1,52 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>StudyGPT</title>
-<link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8" />
+  <title>StudyGPT – Smart Student AI</title>
+  <link rel="stylesheet" href="/static/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-<button class="theme-btn" onclick="toggleTheme()">🌙</button>
+<div class="app">
 
-<header>
-  <h1>StudyGPT</h1>
-  <p>Your AI Teacher & Exam Partner</p>
-</header>
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <h1>StudyGPT</h1>
+    <nav>
+      <button class="active">Dashboard</button>
+      <button>Ask AI</button>
+      <button>Test Mode</button>
+      <button>History</button>
+      <button>Leaderboard</button>
+    </nav>
+  </aside>
 
-<section class="card animate">
-  <h3>Ask AI</h3>
-  <textarea id="question"></textarea>
-  <button onclick="askAI()">Ask</button>
-  <div id="answer" class="output"></div>
-</section>
+  <!-- MAIN -->
+  <main class="main">
 
-<section class="card animate">
-  <h3>Quiz Generator</h3>
-  <input id="topic">
-  <button onclick="generateQuiz()">Generate</button>
-  <div id="quiz" class="output"></div>
-</section>
+    <header class="header">
+      <h2>👨‍🏫 Welcome back, Student</h2>
+      <p>I’ll guide you like a professional teacher.</p>
+    </header>
 
-<section class="card animate">
-  <h3>Real MCQ Test</h3>
-  <input id="testTopic">
-  <button onclick="startRealTest()">Start Test</button>
-  <div id="testArea" class="output"></div>
-</section>
+    <!-- ASK AI -->
+    <section class="card">
+      <h3>Ask AI (Explain)</h3>
+      <textarea id="question" placeholder="Ask any doubt…"></textarea>
+      <button onclick="askAI()">Explain</button>
+      <div id="answer" class="output"></div>
+    </section>
 
-<section class="card animate">
-  <h3>PDF → Test</h3>
-  <input type="file" id="pdfFile">
-  <button onclick="pdfTest()">Generate</button>
-  <div id="pdfOut" class="output"></div>
-</section>
+    <!-- TEST MODE -->
+    <section class="card">
+      <h3>Real Test Mode (MCQ)</h3>
+      <input id="topic" placeholder="Topic (eg: Physics)" />
+      <input id="count" type="number" placeholder="No. of questions" />
+      <button onclick="startTest()">Start Test</button>
+      <div id="test" class="output"></div>
+    </section>
 
-<section class="card animate">
-  <h3>Test History</h3>
-  <button onclick="showHistory()">View</button>
-  <div id="historyBox" class="output"></div>
-</section>
+    <!-- PROGRESS -->
+    <section class="stats">
+      <div class="stat">
+        <h4>Accuracy</h4>
+        <p>72%</p>
+      </div>
+      <div class="stat">
+        <h4>Level</h4>
+        <p>Intermediate</p>
+      </div>
+      <div class="stat">
+        <h4>Rank</h4>
+        <p>#143</p>
+      </div>
+    </section>
 
-<script src="/static/script.js"></script>
+  </main>
+</div>
+
+<script src="/static/app.js"></script>
 </body>
 </html>
