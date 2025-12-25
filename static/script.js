@@ -13,7 +13,54 @@ function startTest(){
  .then(r=>r.json()).then(q=>{
    QUESTIONS=q; ANSWERS=[]
    test.innerHTML=""
-   q.forEach((x,i)=>{
+   q.forEach((x,i)=>{function toggleDark(){
+  document.body.classList.toggle("dark");
+}
+
+async function askAI(){
+  answer.innerHTML = "Thinking...";
+  const res = await fetch("/ask",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({question:question.value})
+  });
+  const data = await res.json();
+  answer.innerHTML = data.answer;
+}
+
+async function summarizeNotes(){
+  summary.innerHTML = "Summarizing...";
+  const res = await fetch("/summarize",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({text:notes.value})
+  });
+  const data = await res.json();
+  summary.innerHTML = data.summary;
+}
+
+async function startQuiz(){
+  quizResult.innerHTML = "Preparing quiz...";
+  const res = await fetch("/quiz",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({topic:quizTopic.value})
+  });
+  const data = await res.json();
+  quizResult.innerHTML = data.result;
+}
+
+async function startExam(){
+  examResult.innerHTML = "Entering focus mode...";
+  const res = await fetch("/exam",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({topic:examTopic.value})
+  });
+  const data = await res.json();
+  examResult.innerHTML = data.result;
+}
+
      let div=document.createElement("div")
      div.innerHTML=`<p>${x.q}</p>`
      x.options.forEach((o,j)=>{
