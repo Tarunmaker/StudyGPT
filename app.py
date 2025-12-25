@@ -1,138 +1,150 @@
-from flask import Flask, render_template, request, jsonify
-import random
-import datetime
+from flask import Flask, render_template, request, jsonify, redirect, session
+from werkzeug.utils import secure_filename
+from PyPDF2 import PdfReader
+import os, random, datetime
 
 app = Flask(__name__)
+app.secret_key = "studygpt_secret_key"
 
-# =========================
-# In-memory storage (demo)
-# =========================
-TEST_HISTORY = []
+# ---------------- CONFIG ----------------
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# =========================
-# HOME
-# =========================
-@app.route("/")
-def index():
-    return render_template("index.html")
+# ---------------- DUMMY DATABASE ----------------
+USERS = {
+    "student": "1234"
+}
 
-# =========================
-# ASK AI (Teacher Style)
-# =========================
+TEST_HISTORY = []   # [{date, score, total, percent}]
+
+# ---------------- LOGIN ----------------
+@app.route("/", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        if USERS.get(username) == password:
+            session["user"] = username
+            return redirect("/dashboard")
+
+        return render_template("login.html", error="Invalid credentials")
+
+    return render_template("login.html")
+
+# ---------------- LOGOUT ----------------
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+# ---------------- DASHBOARD ----------------
+@app.route("/dashboard")
+def dashboard():
+    if "user" not in session:
+        return redirect("/")
+    return render_template("dashboard.html", history=TEST_HISTORY)
+
+# ---------------- ASK AI ----------------
 @app.route("/ask", methods=["POST"])
 def ask_ai():
     data = request.json
-    question = data.get("question", "")
+    question = data.get("question", "").strip()
 
     if not question:
-        return jsonify(error="Question is empty")
+        return jsonify({"error": "Question required"})
 
     answer = f"""
-👨‍🏫 Teacher Explanation:
+👨‍🏫 Teacher Explanation
 
-Your question was: "{question}"
+Your question: {question}
 
-Think of it step-by-step:
-1️⃣ Understand the concept  
-2️⃣ Apply logic  
-3️⃣ Practice with examples  
+• Break the concept into basics  
+• Understand definitions  
+• Practice examples  
 
-📌 Tip: Revise this topic again after 24 hours for strong memory.
+📌 Tip: Revise again tomorrow for better retention.
 """
+    return jsonify({"answer": answer.strip()})
 
-    return jsonify(answer=answer.strip())
-
-# =========================
-# GENERATE REAL MCQ TEST
-# =========================
-@app.route("/test", methods=["POST"])
+# ---------------- GENERATE MCQ TEST ----------------
+@app.route("/generate-test", methods=["POST"])
 def generate_test():
     data = request.json
     topic = data.get("topic", "General")
     count = int(data.get("count", 5))
 
     questions = []
-
     for i in range(count):
         correct = random.randint(0, 3)
-        options = ["Option A", "Option B", "Option C", "Option D"]
-
         questions.append({
             "question": f"{topic} Question {i+1}",
-            "options": options,
+            "options": ["Option A", "Option B", "Option C", "Option D"],
             "correct": correct
         })
 
-    return jsonify({
-        "topic": topic,
-        "questions": questions
-    })
+    return jsonify({"questions": questions})
 
-# =========================
-# SUBMIT TEST
-# =========================
+# ---------------- SUBMIT TEST ----------------
 @app.route("/submit-test", methods=["POST"])
 def submit_test():
     data = request.json
-    answers = data.get("answers", [])
     questions = data.get("questions", [])
+    answers = data.get("answers", [])
 
     score = 0
-    result_detail = []
-
     for i, q in enumerate(questions):
-        is_correct = answers[i] == q["correct"]
-        if is_correct:
+        if i < len(answers) and answers[i] == q["correct"]:
             score += 1
 
-        result_detail.append({
-            "question": q["question"],
-            "correct": q["correct"],
-            "selected": answers[i],
-            "is_correct": is_correct
-        })
+    total = len(questions)
+    percent = round((score / total) * 100, 2) if total else 0
 
-    percentage = round((score / len(questions)) * 100, 2)
-
-    guidance = teacher_guidance(percentage)
-
-    history_entry = {
+    TEST_HISTORY.append({
         "date": datetime.datetime.now().strftime("%d %b %Y %H:%M"),
         "score": score,
-        "total": len(questions),
-        "percentage": percentage
-    }
+        "total": total,
+        "percent": percent
+    })
 
-    TEST_HISTORY.append(history_entry)
+    guidance = (
+        "🌟 Excellent work! Try advanced questions."
+        if percent >= 80 else
+        "👍 Good attempt. Revise weak areas."
+        if percent >= 50 else
+        "⚠️ Start from basics and practice daily."
+    )
 
     return jsonify({
         "score": score,
-        "total": len(questions),
-        "percentage": percentage,
-        "guidance": guidance,
-        "details": result_detail
+        "total": total,
+        "percent": percent,
+        "guidance": guidance
     })
 
-# =========================
-# TEST HISTORY
-# =========================
-@app.route("/history")
-def history():
-    return jsonify(TEST_HISTORY)
+# ---------------- PDF → TEST (SAFE) ----------------
+@app.route("/pdf-test", methods=["POST"])
+def pdf_test():
+    file = request.files.get("pdf")
+    if not file:
+        return jsonify({"error": "No PDF uploaded"})
 
-# =========================
-# TEACHER GUIDANCE LOGIC
-# =========================
-def teacher_guidance(percent):
-    if percent >= 85:
-        return "🌟 Excellent! You have strong command. Try advanced level questions."
-    elif percent >= 60:
-        return "👍 Good job! Revise weak areas and practice more MCQs."
-    else:
-        return "⚠️ Needs improvement. Start from basics and take short tests daily."
+    filename = secure_filename(file.filename)
+    path = os.path.join(UPLOAD_FOLDER, filename)
+    file.save(path)
 
-# =========================
-# RUN APP
-# =========================
+    reader = PdfReader(path)
+    text = ""
+    for page in reader.pages:
+        if page.extract_text():
+            text += page.extract_text()
+
+    return jsonify({
+        "message": "PDF uploaded successfully",
+        "preview": text[:300]
+    })
+
+# ---------------- RUN ----------------
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
