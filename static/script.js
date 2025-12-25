@@ -75,7 +75,39 @@ async function startExam(){
    s.innerText="Submit Test"
    s.onclick=submitTest
    test.appendChild(s)
- })
+ })async function askAI(){
+  answer.innerHTML = "Thinking...";
+  const res = await fetch("/ask",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({question:question.value})
+  });
+  const data = await res.json();
+  answer.innerHTML = data.answer;
+}
+
+async function generateQuiz(){
+  quiz.innerHTML = "Generating quiz...";
+  const res = await fetch("/quiz",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({question:quizTopic.value})
+  });
+  const data = await res.json();
+  quiz.innerHTML = data.answer;
+}
+
+async function summarizeNotes(){
+  summary.innerHTML = "Summarizing...";
+  const res = await fetch("/summarize",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({text:notes.value})
+  });
+  const data = await res.json();
+  summary.innerHTML = data.summary;
+}
+
 }
 
 function submitTest(){
