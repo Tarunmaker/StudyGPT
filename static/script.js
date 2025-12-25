@@ -1,43 +1,35 @@
-function toggleMode(){
- document.body.classList.toggle("dark");
+async function askAI() {
+  const q = question.value.trim();
+  if (!q) return;
+  answer.innerHTML = "Thinking...";
+
+  const res = await fetch("/ask", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ question: q })
+  });
+  const data = await res.json();
+  answer.innerHTML = data.answer || data.error;
 }
 
-async function askAI(){
- answer.innerText="Thinking...";
- const r=await fetch("/ask",{
-  method:"POST",
-  headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({question:question.value})
- });
- const d=await r.json();
- answer.innerText=d.answer;
+async function generateQuiz() {
+  quiz.innerHTML = "Generating quiz...";
+  const res = await fetch("/quiz", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ topic: topic.value })
+  });
+  const data = await res.json();
+  quiz.innerHTML = data.quiz || data.error;
 }
 
-let qs=[],i=0,score=0;
-
-async function startTest(){
- const r=await fetch("/test",{
-  method:"POST",
-  headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({topic:topic.value})
- });
- qs=JSON.parse((await r.json()).test);
- i=0;score=0;
- showQ();
-}
-
-function showQ(){
- const q=qs[i];
- testBox.innerHTML=`<b>${q.q}</b><br>`+
- q.options.map(o=>`<button onclick="check('${o}','${q.answer}',this)">${o}</button>`).join("");
-}
-
-function check(sel,ans,btn){
- btn.style.background=sel===ans?"green":"red";
- if(sel===ans)score++;
- setTimeout(()=>{
-  i++;
-  if(i<qs.length)showQ();
-  else testBox.innerHTML=`Score: ${score}/${qs.length}`;
- },700);
+async function summarizeNotes() {
+  summary.innerHTML = "Summarizing...";
+  const res = await fetch("/summarize", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ text: notes.value })
+  });
+  const data = await res.json();
+  summary.innerHTML = data.summary || data.error;
 }
