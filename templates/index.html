@@ -1,29 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>StudyGPT</title>
-<link rel="stylesheet" href="/static/style.css">
+  <meta charset="UTF-8">
+  <title>StudyGPT</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-<body class="light">
+<body>
 
-<button class="toggle" onclick="toggleMode()">🌙</button>
+<header class="navbar">
+  <div class="logo">StudyGPT</div>
+  <span class="badge">AI Teacher</span>
+</header>
 
-<h1>StudyGPT</h1>
-<a href="/dashboard">📊 Dashboard</a>
+<div class="container">
 
-<section>
-<h2>Ask AI</h2>
-<textarea id="question"></textarea>
-<button onclick="askAI()">Ask</button>
-<div id="answer"></div>
-</section>
+  <!-- ASK AI -->
+  <section class="card">
+    <h3>💬 Ask AI</h3>
+    <textarea id="question" placeholder="Ask your doubt..."></textarea>
+    <button onclick="askAI()">Explain</button>
+    <div id="answer" class="output"></div>
+  </section>
 
-<section>
-<h2>Real Test Mode</h2>
-<input id="topic" placeholder="Topic">
-<button onclick="startTest()">Start Test</button>
-<div id="testBox"></div>
-</section>
+  <!-- QUIZ -->
+  <section class="card">
+    <h3>🧠 Practice Quiz</h3>
+    <input id="topic" placeholder="Enter topic">
+    <button onclick="generateQuiz()">Generate Quiz</button>
+    <div id="quiz" class="output"></div>
+  </section>
+
+  <!-- SUMMARIZE -->
+  <section class="card">
+    <h3>📝 Summarize Notes</h3>
+    <textarea id="notes" placeholder="Paste notes here..."></textarea>
+    <button onclick="summarizeNotes()">Summarize</button>
+    <div id="summary" class="output"></div>
+  </section>
+
+</div>
 
 <script src="/static/script.js"></script>
 </body>
