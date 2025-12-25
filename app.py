@@ -1,100 +1,138 @@
-import os
 from flask import Flask, render_template, request, jsonify
-from flask_cors import CORS
-import openai
-from PyPDF2 import PdfReader
+import random
+import datetime
 
 app = Flask(__name__)
-CORS(app)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# =========================
+# In-memory storage (demo)
+# =========================
+TEST_HISTORY = []
 
+# =========================
+# HOME
+# =========================
 @app.route("/")
-def home():
+def index():
     return render_template("index.html")
 
-# ---------- ASK AI ----------
+# =========================
+# ASK AI (Teacher Style)
+# =========================
 @app.route("/ask", methods=["POST"])
-def ask():
-    q = request.json.get("question","").strip()
-    if not q:
-        return jsonify({"error":"Question required"})
+def ask_ai():
+    data = request.json
+    question = data.get("question", "")
 
-    res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {"role":"system","content":"You are a professional teacher. Explain step by step."},
-            {"role":"user","content":q}
-        ]
-    )
-    return jsonify({"answer":res.choices[0].message.content})
+    if not question:
+        return jsonify(error="Question is empty")
 
-# ---------- QUIZ ----------
-@app.route("/quiz", methods=["POST"])
-def quiz():
-    topic = request.json.get("topic","").strip()
-    if not topic:
-        return jsonify({"error":"Topic required"})
+    answer = f"""
+👨‍🏫 Teacher Explanation:
 
-    prompt = f"""
-Create 5 MCQs on {topic}.
-Give options, correct answer and explanation.
+Your question was: "{question}"
+
+Think of it step-by-step:
+1️⃣ Understand the concept  
+2️⃣ Apply logic  
+3️⃣ Practice with examples  
+
+📌 Tip: Revise this topic again after 24 hours for strong memory.
 """
-    res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role":"user","content":prompt}]
-    )
-    return jsonify({"quiz":res.choices[0].message.content})
 
-# ---------- REAL TEST ----------
-@app.route("/real-test", methods=["POST"])
-def real_test():
-    topic = request.json.get("topic","")
+    return jsonify(answer=answer.strip())
 
-    prompt = f"""
-Create 5 MCQs on {topic}.
-Return STRICT JSON ONLY:
-[
-  {{
-    "q":"Question",
-    "options":["A","B","C","D"],
-    "answer":"A"
-  }}
-]
-"""
-    res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role":"user","content":prompt}]
-    )
-    return jsonify({"questions":res.choices[0].message.content})
+# =========================
+# GENERATE REAL MCQ TEST
+# =========================
+@app.route("/test", methods=["POST"])
+def generate_test():
+    data = request.json
+    topic = data.get("topic", "General")
+    count = int(data.get("count", 5))
 
-# ---------- PDF TO TEST ----------
-@app.route("/pdf-test", methods=["POST"])
-def pdf_test():
-    pdf = request.files.get("pdf")
-    if not pdf:
-        return jsonify({"error":"No PDF uploaded"})
+    questions = []
 
-    reader = PdfReader(pdf)
-    text=""
-    for p in reader.pages:
-        if p.extract_text():
-            text+=p.extract_text()
+    for i in range(count):
+        correct = random.randint(0, 3)
+        options = ["Option A", "Option B", "Option C", "Option D"]
 
-    prompt = f"""
-Create 5 MCQs from this content:
-{text[:3000]}
-"""
-    res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role":"user","content":prompt}]
-    )
-    return jsonify({"quiz":res.choices[0].message.content})
+        questions.append({
+            "question": f"{topic} Question {i+1}",
+            "options": options,
+            "correct": correct
+        })
 
+    return jsonify({
+        "topic": topic,
+        "questions": questions
+    })
+
+# =========================
+# SUBMIT TEST
+# =========================
+@app.route("/submit-test", methods=["POST"])
+def submit_test():
+    data = request.json
+    answers = data.get("answers", [])
+    questions = data.get("questions", [])
+
+    score = 0
+    result_detail = []
+
+    for i, q in enumerate(questions):
+        is_correct = answers[i] == q["correct"]
+        if is_correct:
+            score += 1
+
+        result_detail.append({
+            "question": q["question"],
+            "correct": q["correct"],
+            "selected": answers[i],
+            "is_correct": is_correct
+        })
+
+    percentage = round((score / len(questions)) * 100, 2)
+
+    guidance = teacher_guidance(percentage)
+
+    history_entry = {
+        "date": datetime.datetime.now().strftime("%d %b %Y %H:%M"),
+        "score": score,
+        "total": len(questions),
+        "percentage": percentage
+    }
+
+    TEST_HISTORY.append(history_entry)
+
+    return jsonify({
+        "score": score,
+        "total": len(questions),
+        "percentage": percentage,
+        "guidance": guidance,
+        "details": result_detail
+    })
+
+# =========================
+# TEST HISTORY
+# =========================
+@app.route("/history")
+def history():
+    return jsonify(TEST_HISTORY)
+
+# =========================
+# TEACHER GUIDANCE LOGIC
+# =========================
+def teacher_guidance(percent):
+    if percent >= 85:
+        return "🌟 Excellent! You have strong command. Try advanced level questions."
+    elif percent >= 60:
+        return "👍 Good job! Revise weak areas and practice more MCQs."
+    else:
+        return "⚠️ Needs improvement. Start from basics and take short tests daily."
+
+# =========================
+# RUN APP
+# =========================
 if __name__ == "__main__":
-    import os
-
-if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
-
+    app.run(host="0.0.0.0", port=5000, debug=True)
