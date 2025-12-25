@@ -1,35 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <title>StudyGPT</title>
   <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<h1>🧠 StudyGPT</h1>
-<p>Your AI study helper</p>
+  <!-- HEADER -->
+  <header class="top-bar">
+    <h1>StudyGPT</h1>
+  </header>
 
-<hr>
+  <!-- CHAT AREA -->
+  <main class="chat-container" id="chat">
+    <div class="message ai">
+      👋 Hi! Ask me anything to start studying.
+    </div>
+  </main>
 
-<h2>Ask AI</h2>
-<textarea id="question" placeholder="Ask your doubt..."></textarea>
-<button onclick="askAI()">Ask</button>
-<div id="answer"></div>
+  <!-- INPUT -->
+  <footer class="input-bar">
+    <input id="question" placeholder="Ask anything..." />
+    <button onclick="askAI()">➤</button>
+  </footer>
 
-<hr>
-
-<h2>Quiz Generator</h2>
-<input id="quizTopic" placeholder="Enter topic">
-<button onclick="generateQuiz()">Generate Quiz</button>
-<div id="quiz"></div>
-
-<hr>
-
-<h2>Summarize Notes</h2>
-<textarea id="notes" placeholder="Paste your notes here..."></textarea>
-<button onclick="summarizeNotes()">Summarize</button>
-<div id="summary"></div>
-
-<script src="/static/script.js"></script>
+  <script src="/static/script.js"></script>
 </body>
 </html>
