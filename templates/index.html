@@ -1,71 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <title>StudyGPT – Smart Student AI</title>
-  <link rel="stylesheet" href="/static/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <title>StudyGPT</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<div class="app">
+<div class="chat-container">
+  <div class="chat-header">StudyGPT</div>
 
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <h1>StudyGPT</h1>
-    <nav>
-      <button class="active">Dashboard</button>
-      <button>Ask AI</button>
-      <button>Test Mode</button>
-      <button>History</button>
-      <button>Leaderboard</button>
-    </nav>
-  </aside>
+  <div id="chat" class="chat-body"></div>
 
-  <!-- MAIN -->
-  <main class="main">
-
-    <header class="header">
-      <h2>👨‍🏫 Welcome back, Student</h2>
-      <p>I’ll guide you like a professional teacher.</p>
-    </header>
-
-    <!-- ASK AI -->
-    <section class="card">
-      <h3>Ask AI (Explain)</h3>
-      <textarea id="question" placeholder="Ask any doubt…"></textarea>
-      <button onclick="askAI()">Explain</button>
-      <div id="answer" class="output"></div>
-    </section>
-
-    <!-- TEST MODE -->
-    <section class="card">
-      <h3>Real Test Mode (MCQ)</h3>
-      <input id="topic" placeholder="Topic (eg: Physics)" />
-      <input id="count" type="number" placeholder="No. of questions" />
-      <button onclick="startTest()">Start Test</button>
-      <div id="test" class="output"></div>
-    </section>
-
-    <!-- PROGRESS -->
-    <section class="stats">
-      <div class="stat">
-        <h4>Accuracy</h4>
-        <p>72%</p>
-      </div>
-      <div class="stat">
-        <h4>Level</h4>
-        <p>Intermediate</p>
-      </div>
-      <div class="stat">
-        <h4>Rank</h4>
-        <p>#143</p>
-      </div>
-    </section>
-
-  </main>
+  <div class="chat-input">
+    <input id="input" placeholder="Ask anything…" />
+    <button onclick="send()">➤</button>
+  </div>
 </div>
 
-<script src="/static/app.js"></script>
+<script>
+async function send(){
+  const input = document.getElementById("input");
+  const chat = document.getElementById("chat");
+
+  if(!input.value) return;
+
+  chat.innerHTML += `<div class="msg user">${input.value}</div>`;
+  const text = input.value;
+  input.value = "";
+
+  const res = await fetch("/chat",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:text})
+  });
+
+  const data = await res.json();
+  chat.innerHTML += `<div class="msg bot">${data.reply}</div>`;
+  chat.scrollTop = chat.scrollHeight;
+}
+</script>
+
 </body>
 </html>
