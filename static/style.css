@@ -1,39 +1,72 @@
 body {
-  font-family: Arial;
-  background:#f4f7fb;
-  padding:20px;
-  transition:.3s;
-}
-body.dark {background:#0f172a;color:white;}
-
-header{text-align:center;margin-bottom:20px}
-
-.card {
-  background:white;
-  padding:20px;
-  margin-bottom:20px;
-  border-radius:12px;
-  box-shadow:0 10px 20px rgba(0,0,0,.08);
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #343541;
+  color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-body.dark .card{background:#020617}
-
-textarea,input{
-  width:100%;
-  padding:10px;
-  margin:8px 0;
+.top-bar {
+  background: #202123;
+  padding: 14px;
+  text-align: center;
+  font-weight: bold;
 }
 
-button{
-  background:#2563eb;
-  color:white;
-  padding:8px 14px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
-  transition:.2s;
+.chat-area {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }
 
+.msg {
+  max-width: 75%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+}
+
+.ai { background: #444654; }
+.user {
+  background: #19c37d;
+  color: black;
+  margin-left: auto;
+}
+
+.mode-bar {
+  display: flex;
+  gap: 10px;
+  padding: 10px;
+  background: #2d2f3a;
+}
+
+.mode-bar input {
+  flex: 1;
+  padding: 8px;
+}
+
+.input-bar {
+  display: flex;
+  padding: 10px;
+  background: #202123;
+}
+
+.input-bar input {
+  flex: 1;
+  padding: 10px;
+  background: #40414f;
+  border: none;
+  color: white;
+}
+
+.input-bar button {
+  background: #19c37d;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+}
 button:hover{transform:scale(1.05)}
 
 .output{margin-top:10px;white-space:pre-wrap}
