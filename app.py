@@ -1,96 +1,84 @@
-import os
 from flask import Flask, render_template, request, jsonify
 from flask_cors import CORS
-import openai
-from PyPDF2 import PdfReader
+from openai import OpenAI
+import os
 
 app = Flask(__name__)
 CORS(app)
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# ---------- ASK AI ----------
+# ---------- 1) NORMAL ASK AI ----------
 @app.route("/ask", methods=["POST"])
-def ask():
-    q = request.json.get("question","").strip()
-    if not q:
-        return jsonify({"error":"Question required"})
+def ask_ai():
+    q = request.json.get("message")
 
-    res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
+    res = client.chat.completions.create(
+        model="gpt-4o-mini",
         messages=[
-            {"role":"system","content":"You are a professional teacher. Explain step by step."},
-            {"role":"user","content":q}
+            {
+                "role": "system",
+                "content": (
+                    "Explain like a good teacher. "
+                    "First give a simple explanation, then step by step. "
+                    "Keep it clear and exam-oriented."
+                )
+            },
+            {"role": "user", "content": q}
         ]
     )
-    return jsonify({"answer":res.choices[0].message.content})
+    return jsonify(reply=res.choices[0].message.content)
 
-# ---------- QUIZ ----------
+# ---------- 2) QUIZ MODE (NORMAL) ----------
 @app.route("/quiz", methods=["POST"])
-def quiz():
-    topic = request.json.get("topic","").strip()
-    if not topic:
-        return jsonify({"error":"Topic required"})
+def quiz_mode():
+    topic = request.json.get("topic")
 
-    prompt = f"""
-Create 5 MCQs on {topic}.
-Give options, correct answer and explanation.
-"""
-    res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role":"user","content":prompt}]
+    res = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "system",
+                "content": (
+                    "Create 5 exam-oriented questions WITH answers. "
+                    "After each answer, give a 1-2 line explanation."
+                )
+            },
+            {"role": "user", "content": topic}
+        ]
     )
-    return jsonify({"quiz":res.choices[0].message.content})
+    return jsonify(result=res.choices[0].message.content)
 
-# ---------- REAL TEST ----------
-@app.route("/real-test", methods=["POST"])
-def real_test():
-    topic = request.json.get("topic","")
+# ---------- 3) EXAM / FOCUS MODE ----------
+@app.route("/exam", methods=["POST"])
+def exam_mode():
+    topic = request.json.get("topic")
+    student_answer = request.json.get("answer", "")
 
-    prompt = f"""
-Create 5 MCQs on {topic}.
-Return STRICT JSON ONLY:
-[
-  {{
-    "q":"Question",
-    "options":["A","B","C","D"],
-    "answer":"A"
-  }}
-]
-"""
-    res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role":"user","content":prompt}]
+    prompt = (
+        "You are an exam tutor. "
+        "Ask ONE question at a time from the topic. "
+        "If a student answer is given, evaluate it, explain mistakes or improvements, "
+        "then ask the NEXT question. "
+        "Do not reveal full answers immediately. "
+        "Focus on thinking process."
     )
-    return jsonify({"questions":res.choices[0].message.content})
 
-# ---------- PDF TO TEST ----------
-@app.route("/pdf-test", methods=["POST"])
-def pdf_test():
-    pdf = request.files.get("pdf")
-    if not pdf:
-        return jsonify({"error":"No PDF uploaded"})
+    user_content = f"Topic: {topic}\nStudent answer: {student_answer}"
 
-    reader = PdfReader(pdf)
-    text=""
-    for p in reader.pages:
-        if p.extract_text():
-            text+=p.extract_text()
-
-    prompt = f"""
-Create 5 MCQs from this content:
-{text[:3000]}
-"""
-    res = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[{"role":"user","content":prompt}]
+    res = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": prompt},
+            {"role": "user", "content": user_content}
+        ]
     )
-    return jsonify({"quiz":res.choices[0].message.content})
+    return jsonify(reply=res.choices[0].message.content)
 
 if __name__ == "__main__":
-    app.run(debug=True)
-
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
