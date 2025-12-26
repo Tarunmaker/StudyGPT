@@ -1,150 +1,95 @@
-from flask import Flask, render_template, request, jsonify, redirect, session
-from werkzeug.utils import secure_filename
+import os
+from flask import Flask, render_template, request, jsonify
+from flask_cors import CORS
+import openai
 from PyPDF2 import PdfReader
-import os, random, datetime
 
 app = Flask(__name__)
-app.secret_key = "studygpt_secret_key"
+CORS(app)
 
-# ---------------- CONFIG ----------------
-UPLOAD_FOLDER = "uploads"
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
-# ---------------- DUMMY DATABASE ----------------
-USERS = {
-    "student": "1234"
-}
+@app.route("/")
+def home():
+    return render_template("index.html")
 
-TEST_HISTORY = []   # [{date, score, total, percent}]
-
-# ---------------- LOGIN ----------------
-@app.route("/", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        username = request.form.get("username")
-        password = request.form.get("password")
-
-        if USERS.get(username) == password:
-            session["user"] = username
-            return redirect("/dashboard")
-
-        return render_template("login.html", error="Invalid credentials")
-
-    return render_template("login.html")
-
-# ---------------- LOGOUT ----------------
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/")
-
-# ---------------- DASHBOARD ----------------
-@app.route("/dashboard")
-def dashboard():
-    if "user" not in session:
-        return redirect("/")
-    return render_template("dashboard.html", history=TEST_HISTORY)
-
-# ---------------- ASK AI ----------------
+# ---------- ASK AI ----------
 @app.route("/ask", methods=["POST"])
-def ask_ai():
-    data = request.json
-    question = data.get("question", "").strip()
+def ask():
+    q = request.json.get("question","").strip()
+    if not q:
+        return jsonify({"error":"Question required"})
 
-    if not question:
-        return jsonify({"error": "Question required"})
-
-    answer = f"""
-👨‍🏫 Teacher Explanation
-
-Your question: {question}
-
-• Break the concept into basics  
-• Understand definitions  
-• Practice examples  
-
-📌 Tip: Revise again tomorrow for better retention.
-"""
-    return jsonify({"answer": answer.strip()})
-
-# ---------------- GENERATE MCQ TEST ----------------
-@app.route("/generate-test", methods=["POST"])
-def generate_test():
-    data = request.json
-    topic = data.get("topic", "General")
-    count = int(data.get("count", 5))
-
-    questions = []
-    for i in range(count):
-        correct = random.randint(0, 3)
-        questions.append({
-            "question": f"{topic} Question {i+1}",
-            "options": ["Option A", "Option B", "Option C", "Option D"],
-            "correct": correct
-        })
-
-    return jsonify({"questions": questions})
-
-# ---------------- SUBMIT TEST ----------------
-@app.route("/submit-test", methods=["POST"])
-def submit_test():
-    data = request.json
-    questions = data.get("questions", [])
-    answers = data.get("answers", [])
-
-    score = 0
-    for i, q in enumerate(questions):
-        if i < len(answers) and answers[i] == q["correct"]:
-            score += 1
-
-    total = len(questions)
-    percent = round((score / total) * 100, 2) if total else 0
-
-    TEST_HISTORY.append({
-        "date": datetime.datetime.now().strftime("%d %b %Y %H:%M"),
-        "score": score,
-        "total": total,
-        "percent": percent
-    })
-
-    guidance = (
-        "🌟 Excellent work! Try advanced questions."
-        if percent >= 80 else
-        "👍 Good attempt. Revise weak areas."
-        if percent >= 50 else
-        "⚠️ Start from basics and practice daily."
+    res = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role":"system","content":"You are a professional teacher. Explain step by step."},
+            {"role":"user","content":q}
+        ]
     )
+    return jsonify({"answer":res.choices[0].message.content})
 
-    return jsonify({
-        "score": score,
-        "total": total,
-        "percent": percent,
-        "guidance": guidance
-    })
+# ---------- QUIZ ----------
+@app.route("/quiz", methods=["POST"])
+def quiz():
+    topic = request.json.get("topic","").strip()
+    if not topic:
+        return jsonify({"error":"Topic required"})
 
-# ---------------- PDF → TEST (SAFE) ----------------
+    prompt = f"""
+Create 5 MCQs on {topic}.
+Give options, correct answer and explanation.
+"""
+    res = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role":"user","content":prompt}]
+    )
+    return jsonify({"quiz":res.choices[0].message.content})
+
+# ---------- REAL TEST ----------
+@app.route("/real-test", methods=["POST"])
+def real_test():
+    topic = request.json.get("topic","")
+
+    prompt = f"""
+Create 5 MCQs on {topic}.
+Return STRICT JSON ONLY:
+[
+  {{
+    "q":"Question",
+    "options":["A","B","C","D"],
+    "answer":"A"
+  }}
+]
+"""
+    res = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role":"user","content":prompt}]
+    )
+    return jsonify({"questions":res.choices[0].message.content})
+
+# ---------- PDF TO TEST ----------
 @app.route("/pdf-test", methods=["POST"])
 def pdf_test():
-    file = request.files.get("pdf")
-    if not file:
-        return jsonify({"error": "No PDF uploaded"})
+    pdf = request.files.get("pdf")
+    if not pdf:
+        return jsonify({"error":"No PDF uploaded"})
 
-    filename = secure_filename(file.filename)
-    path = os.path.join(UPLOAD_FOLDER, filename)
-    file.save(path)
+    reader = PdfReader(pdf)
+    text=""
+    for p in reader.pages:
+        if p.extract_text():
+            text+=p.extract_text()
 
-    reader = PdfReader(path)
-    text = ""
-    for page in reader.pages:
-        if page.extract_text():
-            text += page.extract_text()
+    prompt = f"""
+Create 5 MCQs from this content:
+{text[:3000]}
+"""
+    res = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[{"role":"user","content":prompt}]
+    )
+    return jsonify({"quiz":res.choices[0].message.content})
 
-    return jsonify({
-        "message": "PDF uploaded successfully",
-        "preview": text[:300]
-    })
-
-# ---------------- RUN ----------------
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(debug=True)
