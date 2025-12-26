@@ -1,51 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>StudyGPT</title>
-<link rel="stylesheet" href="/static/style.css">
+  <title>StudyGPT</title>
+  <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-<button class="theme-btn" onclick="toggleTheme()">🌙</button>
+<header class="top-bar">StudyGPT</header>
 
-<header>
-  <h1>StudyGPT</h1>
-  <p>Your AI Teacher & Exam Partner</p>
-</header>
+<main id="chat" class="chat-area">
+  <div class="msg ai">👋 Hi! Ask a doubt or start quiz/exam.</div>
+</main>
 
-<section class="card animate">
-  <h3>Ask AI</h3>
-  <textarea id="question"></textarea>
-  <button onclick="askAI()">Ask</button>
-  <div id="answer" class="output"></div>
+<section class="mode-bar">
+  <input id="topic" placeholder="Topic for Quiz / Exam">
+  <button onclick="startQuiz()">Quiz</button>
+  <button onclick="startExam()">Exam</button>
 </section>
 
-<section class="card animate">
-  <h3>Quiz Generator</h3>
-  <input id="topic">
-  <button onclick="generateQuiz()">Generate</button>
-  <div id="quiz" class="output"></div>
-</section>
-
-<section class="card animate">
-  <h3>Real MCQ Test</h3>
-  <input id="testTopic">
-  <button onclick="startRealTest()">Start Test</button>
-  <div id="testArea" class="output"></div>
-</section>
-
-<section class="card animate">
-  <h3>PDF → Test</h3>
-  <input type="file" id="pdfFile">
-  <button onclick="pdfTest()">Generate</button>
-  <div id="pdfOut" class="output"></div>
-</section>
-
-<section class="card animate">
-  <h3>Test History</h3>
-  <button onclick="showHistory()">View</button>
-  <div id="historyBox" class="output"></div>
-</section>
+<footer class="input-bar">
+  <input id="input" placeholder="Type your message..." />
+  <button onclick="sendAsk()">➤</button>
+</footer>
 
 <script src="/static/script.js"></script>
 </body>
