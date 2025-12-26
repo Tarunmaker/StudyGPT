@@ -1,43 +1,40 @@
-async function askAI() {
-  const chat = document.getElementById("chat");
-  const q = question.value;
-  if (!q) return;
+let QUESTIONS = []
+let ANSWERS = []
 
-  chat.innerHTML += `<div class="msg user">${q}</div>`;
-  question.value = "";
-
-  const res = await fetch("/ask", {
-    method: "POST",
-    headers: {"Content-Type":"application/json"},
-    body: JSON.stringify({question:q})
-  });
-  const data = await res.json();
-  chat.innerHTML += `<div class="msg ai">${data.answer}</div>`;
-  chat.scrollTop = chat.scrollHeight;
+function askAI(){
+ fetch("/ask",{method:"POST",headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({question:question.value})})
+ .then(r=>r.json()).then(d=>answer.innerHTML=d.answer)
 }
 
-async function startQuiz() {
-  const t = topic.value;
-  const chat = document.getElementById("chat");
-
-  const res = await fetch("/quiz",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({topic:t})
-  });
-  const data = await res.json();
-  chat.innerHTML += `<div class="msg ai">${data.result}</div>`;
+function startTest(){
+ fetch("/generate-test",{method:"POST",headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({topic:topic.value,count:count.value})})
+ .then(r=>r.json()).then(q=>{
+   QUESTIONS=q; ANSWERS=[]
+   test.innerHTML=""
+   q.forEach((x,i)=>{
+     let div=document.createElement("div")
+     div.innerHTML=`<p>${x.q}</p>`
+     x.options.forEach((o,j)=>{
+       let b=document.createElement("button")
+       b.innerText=o
+       b.onclick=()=>{ANSWERS[i]=j; b.style.background="orange"}
+       div.appendChild(b)
+     })
+     test.appendChild(div)
+   })
+   let s=document.createElement("button")
+   s.innerText="Submit Test"
+   s.onclick=submitTest
+   test.appendChild(s)
+ })
 }
 
-async function startExam() {
-  const t = topic.value;
-  const chat = document.getElementById("chat");
-
-  const res = await fetch("/exam",{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({topic:t})
-  });
-  const data = await res.json();
-  chat.innerHTML += `<div class="msg ai">${data.result}</div>`;
+function submitTest(){
+ fetch("/submit-test",{method:"POST",headers:{"Content-Type":"application/json"},
+ body:JSON.stringify({questions:QUESTIONS,answers:ANSWERS})})
+ .then(r=>r.json()).then(d=>{
+   alert(`Score: ${d.score} | ${d.percent}%`)
+ })
 }
