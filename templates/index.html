@@ -1,40 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>StudyGPT</title>
-  <link rel="stylesheet" href="/static/style.css">
+<title>StudyGPT</title>
+<link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header class="top-bar">
-    <h1>StudyGPT</h1>
-  </header>
+<button class="theme-btn" onclick="toggleTheme()">🌙</button>
 
-  <!-- CHAT AREA -->
-  <main class="chat-container" id="chat">
-    <div class="message ai">
-      👋 Hi! Ask me anything to start studying.
-    </div>
-  </main>
+<header>
+  <h1>StudyGPT</h1>
+  <p>Your AI Teacher & Exam Partner</p>
+</header>
 
-  <!-- INPUT -->
-  <footer class="input-bar">
-    <input id="question" placeholder="Ask anything..." />
-    <button onclick="askAI()">➤</button>
-  </footer>
-<hr style="margin:40px 0">
+<section class="card animate">
+  <h3>Ask AI</h3>
+  <textarea id="question"></textarea>
+  <button onclick="askAI()">Ask</button>
+  <div id="answer" class="output"></div>
+</section>
 
-<h2>📝 Practice MCQ Test</h2>
-<p style="color:#666">Click an option. Real exam feeling.</p>
+<section class="card animate">
+  <h3>Quiz Generator</h3>
+  <input id="topic">
+  <button onclick="generateQuiz()">Generate</button>
+  <div id="quiz" class="output"></div>
+</section>
 
-<div id="quiz-box"></div>
+<section class="card animate">
+  <h3>Real MCQ Test</h3>
+  <input id="testTopic">
+  <button onclick="startRealTest()">Start Test</button>
+  <div id="testArea" class="output"></div>
+</section>
 
-<button onclick="nextQuestion()" style="margin-top:15px">Next Question</button>
+<section class="card animate">
+  <h3>PDF → Test</h3>
+  <input type="file" id="pdfFile">
+  <button onclick="pdfTest()">Generate</button>
+  <div id="pdfOut" class="output"></div>
+</section>
 
-<p id="score-box" style="margin-top:10px;font-weight:bold"></p>
+<section class="card animate">
+  <h3>Test History</h3>
+  <button onclick="showHistory()">View</button>
+  <div id="historyBox" class="output"></div>
+</section>
 
-  <script src="/static/script.js"></script>
+<script src="/static/script.js"></script>
 </body>
 </html>
