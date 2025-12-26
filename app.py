@@ -13,52 +13,60 @@ def home():
     return render_template("index.html")
 
 @app.route("/ask", methods=["POST"])
-def ask_ai():
-    question = request.json.get("question")
+def ask():
+    q = request.json.get("question")
 
     res = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {
                 "role": "system",
-                "content": "Explain clearly like a good teacher. Step by step."
+                "content": (
+                    "You are a good teacher. "
+                    "Explain step by step. "
+                    "Focus on understanding and exam clarity."
+                )
             },
-            {"role": "user", "content": question}
+            {"role": "user", "content": q}
         ]
     )
     return jsonify(answer=res.choices[0].message.content)
 
 @app.route("/quiz", methods=["POST"])
 def quiz():
-    topic = request.json.get("question")
+    topic = request.json.get("topic")
 
     res = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {
                 "role": "system",
-                "content": "Create 5 exam-style questions with answers."
+                "content": "Create 5 revision questions with answers."
             },
             {"role": "user", "content": topic}
         ]
     )
-    return jsonify(answer=res.choices[0].message.content)
+    return jsonify(result=res.choices[0].message.content)
 
-@app.route("/summarize", methods=["POST"])
-def summarize():
-    text = request.json.get("text")
+@app.route("/exam", methods=["POST"])
+def exam():
+    topic = request.json.get("topic")
 
     res = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
             {
                 "role": "system",
-                "content": "Summarize notes into short, clear exam-friendly points."
+                "content": (
+                    "You are an exam tutor. "
+                    "Create 5 MCQ questions. "
+                    "Provide options A,B,C,D and correct answer index."
+                )
             },
-            {"role": "user", "content": text}
+            {"role": "user", "content": topic}
         ]
     )
-    return jsonify(summary=res.choices[0].message.content)
+    return jsonify(result=res.choices[0].message.content)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
