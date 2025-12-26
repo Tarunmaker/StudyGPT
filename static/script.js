@@ -1,67 +1,64 @@
-function toggleTheme(){
- document.body.classList.toggle("dark");
+const chat = document.getElementById("chat");
+let examTopic = "";
+let lastExamAnswer = "";
+
+function addMsg(text, cls){
+  const div = document.createElement("div");
+  div.className = "msg " + cls;
+  div.innerText = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
 }
 
-async function askAI(){
- answer.innerHTML="Thinking...";
- const r=await fetch("/ask",{
-  method:"POST",
-  headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({question:question.value})
- });
- const d=await r.json();
- answer.innerHTML=d.answer||d.error;
+// 1️⃣ Ask AI
+async function sendAsk(){
+  const input = document.getElementById("input");
+  const text = input.value.trim();
+  if(!text) return;
+
+  addMsg(text, "user");
+  input.value = "";
+
+  const res = await fetch("/ask",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({message:text})
+  });
+  const data = await res.json();
+  addMsg(data.reply, "ai");
 }
 
-async function generateQuiz(){
- quiz.innerHTML="Generating...";
- const r=await fetch("/quiz",{
-  method:"POST",
-  headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({topic:topic.value})
- });
- const d=await r.json();
- quiz.innerHTML=d.quiz||d.error;
+// 2️⃣ Quiz Mode
+async function startQuiz(){
+  const t = document.getElementById("topic").value;
+  if(!t) return;
+
+  addMsg("📝 Quiz on: " + t, "ai");
+
+  const res = await fetch("/quiz",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({topic:t})
+  });
+  const data = await res.json();
+  addMsg(data.result, "ai");
 }
 
-/* REAL TEST */
-let qs=[],i=0,score=0,history=JSON.parse(localStorage.getItem("hist")||"[]");
+// 3️⃣ Exam / Focus Mode
+async function startExam(){
+  examTopic = document.getElementById("topic").value;
+  lastExamAnswer = "";
 
-async function startRealTest(){
- testArea.innerHTML="Loading...";
- const r=await fetch("/real-test",{
-  method:"POST",
-  headers:{"Content-Type":"application/json"},
-  body:JSON.stringify({topic:testTopic.value})
- });
- qs=JSON.parse((await r.json()).questions);
- i=0;score=0;
- showQ();
+  addMsg("🎯 Exam mode started. Focus.", "ai");
+
+  const res = await fetch("/exam",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({topic:examTopic})
+  });
+  const data = await res.json();
+  addMsg(data.reply, "ai");
 }
-
-function showQ(){
- const q=qs[i];
- testArea.innerHTML=`<b>Q${i+1}. ${q.q}</b><br>`;
- q.options.forEach(o=>{
-  const b=document.createElement("button");
-  b.innerText=o;
-  b.onclick=()=>check(o,q.answer,b);
-  testArea.appendChild(b);
- });
-}
-
-function check(s,a,b){
- if(s===a){b.classList.add("correct");score++}
- else b.classList.add("wrong");
- setTimeout(()=>{
-  i++;
-  if(i<qs.length)showQ();
-  else finish();
- },700);
-}
-
-function finish(){
- const acc=Math.round(score/qs.length*100);
  history.push({score,acc,date:new Date().toLocaleString()});
  localStorage.setItem("hist",JSON.stringify(history));
  testArea.innerHTML=`Score: ${score}/${qs.length}<br>Accuracy: ${acc}%`;
