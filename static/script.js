@@ -1,100 +1,43 @@
 async function askAI() {
-  const input = document.getElementById("question");
   const chat = document.getElementById("chat");
-  const text = input.value.trim();
-  if (!text) return;
+  const q = question.value;
+  if (!q) return;
 
-  // User message
-  const userMsg = document.createElement("div");
-  userMsg.className = "message user";
-  userMsg.style.background = "#19c37d";
-  userMsg.style.color = "#000";
-  userMsg.style.alignSelf = "flex-end";
-  userMsg.innerText = text;
-  chat.appendChild(userMsg);
-
-  input.value = "";
-
-  // AI placeholder
-  const aiMsg = document.createElement("div");
-  aiMsg.className = "message ai";
-  aiMsg.innerText = "Thinking...";
-  chat.appendChild(aiMsg);
-
-  chat.scrollTop = chat.scrollHeight;
+  chat.innerHTML += `<div class="msg user">${q}</div>`;
+  question.value = "";
 
   const res = await fetch("/ask", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question: text })
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({question:q})
   });
-
   const data = await res.json();
-  aiMsg.innerText = data.answer;
-
+  chat.innerHTML += `<div class="msg ai">${data.answer}</div>`;
   chat.scrollTop = chat.scrollHeight;
 }
-const questions = [
-  {
-    q: "What is the SI unit of force?",
-    options: ["Joule", "Newton", "Watt", "Pascal"],
-    correct: 1,
-    explain: "Force = mass × acceleration, unit is Newton."
-  },
-  {
-    q: "2 + 5 × 2 = ?",
-    options: ["14", "12", "9", "10"],
-    correct: 2,
-    explain: "Multiplication first → 5×2 = 10, then +2 = 12 ❌ (Wait) actually 2 + 10 = 12 → option was wrong intentionally to test focus 😄"
-  }
-];
 
-let index = 0;
-let score = 0;
-let locked = false;
+async function startQuiz() {
+  const t = topic.value;
+  const chat = document.getElementById("chat");
 
-function loadQuestion() {
-  locked = false;
-  const q = questions[index];
-  let html = `<div class="mcq"><b>${q.q}</b>`;
-  q.options.forEach((opt, i) => {
-    html += `<div class="option" onclick="checkAnswer(this, ${i})">${opt}</div>`;
+  const res = await fetch("/quiz",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({topic:t})
   });
-  html += `</div>`;
-  document.getElementById("quiz-box").innerHTML = html;
+  const data = await res.json();
+  chat.innerHTML += `<div class="msg ai">${data.result}</div>`;
 }
 
-function checkAnswer(el, i) {
-  if (locked) return;
-  locked = true;
+async function startExam() {
+  const t = topic.value;
+  const chat = document.getElementById("chat");
 
-  const q = questions[index];
-  const options = document.querySelectorAll(".option");
-
-  options[q.correct].classList.add("correct");
-
-  if (i === q.correct) {
-    score++;
-  } else {
-    el.classList.add("wrong");
-  }
-
-  document.getElementById("score-box").innerHTML =
-    `Score: ${score}/${questions.length}<br>
-     <small>📘 ${q.explain}</small>`;
+  const res = await fetch("/exam",{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({topic:t})
+  });
+  const data = await res.json();
+  chat.innerHTML += `<div class="msg ai">${data.result}</div>`;
 }
-
-function nextQuestion() {
-  index++;
-  if (index >= questions.length) {
-    document.getElementById("quiz-box").innerHTML =
-      `<h3>✅ Test Completed</h3>
-       <p>Your Score: ${score}/${questions.length}</p>
-       <p>Teacher Tip: Revise weak concepts and retry.</p>`;
-    return;
-  }
-  loadQuestion();
-}
-
-loadQuestion();
-
