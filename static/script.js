@@ -1,31 +1,19 @@
-let mode = "normal";
+function switchMode(mode) {
+  document.querySelectorAll(".mode").forEach(m => m.classList.add("hidden"));
+  document.getElementById(mode).classList.remove("hidden");
 
-function setMode(m) {
-  mode = m;
-  document.querySelectorAll(".mode-bar button")
-    .forEach(b => b.classList.remove("active"));
+  document.querySelectorAll(".modes button").forEach(b => b.classList.remove("active"));
   event.target.classList.add("active");
 }
 
-async function send() {
-  const input = document.getElementById("question");
-  const chat = document.getElementById("chat");
-  const text = input.value.trim();
-  if (!text) return;
+function check(btn, correct) {
+  document.querySelectorAll(".options button").forEach(b => b.disabled = true);
 
-  chat.innerHTML += `<div class="msg user">${text}</div>`;
-  input.value = "";
-
-  const res = await fetch("/ask", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ question: text, mode })
-  });
-
-  const data = await res.json();
-
-  if (data.answer) {
-    chat.innerHTML += `<div class="msg ai">${data.answer.replace(/\n/g,"<br>")}</div>`;
-    chat.scrollTop = chat.scrollHeight;
+  if (correct) {
+    btn.classList.add("correct");
+    feedback.innerText = "✔ Correct! Electrostatic force acts between charges.";
+  } else {
+    btn.classList.add("wrong");
+    feedback.innerText = "❌ Incorrect. Correct answer is Electrostatic force.";
   }
 }
