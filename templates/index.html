@@ -1,27 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>StudyGPT</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-<header>StudyGPT</header>
+<header>
+  <h1>StudyGPT</h1>
+  <div class="modes">
+    <button onclick="switchMode('ask')" class="active">Ask AI</button>
+    <button onclick="switchMode('quiz')">Quiz</button>
+    <button onclick="switchMode('exam')">Focus / Exam</button>
+  </div>
+</header>
 
-<div class="mode-bar">
-  <button onclick="setMode('normal')" class="active">🧠 Ask AI</button>
-  <button onclick="setMode('quiz')">📝 Quiz Mode</button>
-  <button onclick="setMode('exam')">🎯 Exam Focus</button>
-</div>
+<main id="content">
 
-<div class="chat-box" id="chat"></div>
+  <!-- ASK AI -->
+  <div id="ask" class="mode">
+    <div class="chat">
+      <div class="ai">
+        👋 Ask anything. I’ll explain like a teacher.
+      </div>
+    </div>
+  </div>
 
-<div class="input-box">
-  <input id="question" placeholder="Ask anything..." />
-  <button onclick="send()">➤</button>
-</div>
+  <!-- QUIZ -->
+  <div id="quiz" class="mode hidden">
+    <h2>Quiz: Basics of Physics</h2>
+    <div class="card">
+      <p><b>Q1.</b> SI unit of force?</p>
+      <p class="answer">✔ Answer: Newton (N)</p>
+    </div>
+    <div class="card">
+      <p><b>Q2.</b> Energy in a falling object?</p>
+      <p class="answer">✔ Potential → Kinetic</p>
+    </div>
+  </div>
 
-<script src="/static/script.js"></script>
+  <!-- EXAM -->
+  <div id="exam" class="mode hidden">
+    <h2>Exam Mode – Stay Focused</h2>
+
+    <div class="card">
+      <p><b>Q.</b> Which force exists between electron & proton?</p>
+
+      <div class="options">
+        <button onclick="check(this,false)">A. Gravitational</button>
+        <button onclick="check(this,false)">B. Magnetic</button>
+        <button onclick="check(this,true)">C. Electrostatic</button>
+        <button onclick="check(this,false)">D. Nuclear</button>
+      </div>
+
+      <p id="feedback"></p>
+      <button class="next">Next Question</button>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <input id="input" placeholder="Type a message..." />
+  <button>➤</button>
+</footer>
+
+<script src="script.js"></script>
 </body>
 </html>
