@@ -1,75 +1,110 @@
+* {
+  box-sizing: border-box;
+  font-family: system-ui, sans-serif;
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #1e1f22;
+  background: #1e1f23;
   color: #fff;
 }
 
 header {
   padding: 15px;
-  text-align: center;
-  font-size: 22px;
   background: #111;
-}
-
-.mode-bar {
   display: flex;
-  justify-content: center;
-  gap: 10px;
-  padding: 10px;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.mode-bar button {
-  padding: 8px 14px;
+.modes button {
+  background: #2a2b30;
+  color: #fff;
   border: none;
-  border-radius: 6px;
-  background: #2c2f36;
-  color: white;
+  padding: 8px 14px;
+  margin-left: 8px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-.mode-bar button.active {
-  background: #4f8cff;
+.modes .active {
+  background: #3b82f6;
 }
 
-.chat-box {
-  height: 65vh;
-  overflow-y: auto;
+main {
   padding: 20px;
+  min-height: calc(100vh - 140px);
 }
 
-.msg {
-  margin-bottom: 15px;
+.mode.hidden {
+  display: none;
 }
 
-.user {
-  text-align: right;
-  color: #9cdcfe;
+.chat .ai {
+  background: #2b2c31;
+  padding: 15px;
+  border-radius: 12px;
+  max-width: 600px;
 }
 
-.ai {
-  text-align: left;
-  color: #dcdcaa;
+.card {
+  background: #2b2c31;
+  padding: 20px;
+  border-radius: 12px;
+  max-width: 600px;
 }
 
-.input-box {
-  display: flex;
+.answer {
+  color: #22c55e;
+}
+
+.options button {
+  width: 100%;
+  margin: 6px 0;
   padding: 10px;
+  border-radius: 8px;
+  border: none;
+  background: #3a3b40;
+  color: #fff;
+  cursor: pointer;
+}
+
+.options button.correct {
+  background: #16a34a;
+}
+
+.options button.wrong {
+  background: #dc2626;
+}
+
+.next {
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  background: #3b82f6;
+  border: none;
+  color: #fff;
+  border-radius: 8px;
+}
+
+footer {
+  display: flex;
+  padding: 15px;
   background: #111;
 }
 
-input {
+footer input {
   flex: 1;
   padding: 10px;
-  background: #2c2f36;
+  border-radius: 8px;
   border: none;
-  color: white;
 }
 
-button {
+footer button {
+  margin-left: 10px;
   padding: 10px 16px;
-  background: #4f8cff;
+  border-radius: 8px;
   border: none;
-  color: white;
-  cursor: pointer;
+  background: #3b82f6;
+  color: #fff;
 }
