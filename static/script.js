@@ -1,19 +1,22 @@
-function switchMode(mode) {
-  document.querySelectorAll(".mode").forEach(m => m.classList.add("hidden"));
-  document.getElementById(mode).classList.remove("hidden");
+async function startQuiz() {
+  const topic = document.getElementById("quizTopic").value;
+  const mode = document.getElementById("quizType").value;
+  const count = document.getElementById("questionCount").value;
 
-  document.querySelectorAll(".modes button").forEach(b => b.classList.remove("active"));
-  event.target.classList.add("active");
-}
+  const quizArea = document.getElementById("quizArea");
+  quizArea.innerHTML = "👩‍🏫 Teacher is preparing your test...";
 
-function check(btn, correct) {
-  document.querySelectorAll(".options button").forEach(b => b.disabled = true);
+  try {
+    const res = await fetch("/quiz", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ topic, mode, count })
+    });
 
-  if (correct) {
-    btn.classList.add("correct");
-    feedback.innerText = "✔ Correct! Electrostatic force acts between charges.";
-  } else {
-    btn.classList.add("wrong");
-    feedback.innerText = "❌ Incorrect. Correct answer is Electrostatic force.";
+    const data = await res.json();
+    quizArea.innerHTML = `<pre>${data.quiz}</pre>`;
+
+  } catch {
+    quizArea.innerHTML = "❌ Error generating quiz.";
   }
 }
