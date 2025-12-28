@@ -1,22 +1,47 @@
-async function startQuiz() {
-  const topic = document.getElementById("quizTopic").value;
-  const mode = document.getElementById("quizType").value;
-  const count = document.getElementById("questionCount").value;
-
-  const quizArea = document.getElementById("quizArea");
-  quizArea.innerHTML = "👩‍🏫 Teacher is preparing your test...";
-
-  try {
-    const res = await fetch("/quiz", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ topic, mode, count })
+function renderHistory(items) {
+    const box = document.getElementById("history");
+    box.innerHTML = "";
+    items.forEach(h => {
+        box.innerHTML += `
+        <div class="history-item">
+            <b>Q:</b> ${h.question}<br>
+            <b>A:</b> ${h.answer}
+        </div>`;
     });
+}
 
+async function askAI() {
+    const q = document.getElementById("question").value;
+    const res = await fetch("/ask", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({question: q})
+    });
     const data = await res.json();
-    quizArea.innerHTML = `<pre>${data.quiz}</pre>`;
+    document.getElementById("answer").innerText = data.answer;
+    renderHistory(data.history);
+}
 
-  } catch {
-    quizArea.innerHTML = "❌ Error generating quiz.";
-  }
+async function generateQuiz() {
+    const topic = document.getElementById("topic").value;
+    const res = await fetch("/quiz", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({topic})
+    });
+    const data = await res.json();
+    document.getElementById("answer").innerText = data.quiz;
+    renderHistory(data.history);
+}
+
+async function summarizeNotes() {
+    const text = document.getElementById("notes").value;
+    const res = await fetch("/summarize", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({text})
+    });
+    const data = await res.json();
+    document.getElementById("answer").innerText = data.summary;
+    renderHistory(data.history);
 }
