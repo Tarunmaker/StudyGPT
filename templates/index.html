@@ -1,21 +1,47 @@
-<hr>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StudySmart</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
 
-<h2>📝 Online Test & Quiz (Teacher Mode)</h2>
+<header>
+    <div class="logo">🎓 StudySmart</div>
+    <nav>
+        <a>Home</a>
+        <a>Ask AI</a>
+        <a>Quiz Generator</a>
+        <a>Summarize Notes</a>
+        <a>Settings</a>
+    </nav>
+</header>
 
-<select id="quizType">
-  <option value="with_answer">Quiz with Answers</option>
-  <option value="test_mode">Test Mode (No Answers)</option>
-</select>
+<main>
+    <section class="left">
+        <h3>Enter your question:</h3>
+        <input id="question" placeholder="Type your question here..." />
+        <button onclick="askAI()">Ask AI</button>
 
-<select id="questionCount">
-  <option value="5">5 Questions</option>
-  <option value="10">10 Questions</option>
-  <option value="20">20 Questions</option>
-</select>
+        <h3>AI Response:</h3>
+        <div id="answer" class="box">Your AI-generated answer will appear here.</div>
 
-<input id="quizTopic" placeholder="Enter topic (e.g. Physics – Motion)" />
+        <h3>Quiz Generator:</h3>
+        <input id="topic" placeholder="Enter quiz topic" />
+        <button onclick="generateQuiz()">Generate Quiz</button>
 
-<button onclick="startQuiz()">Start Quiz</button>
+        <h3>Summarize Notes:</h3>
+        <textarea id="notes" placeholder="Paste notes here"></textarea>
+        <button onclick="summarizeNotes()">Summarize</button>
+    </section>
 
-<div id="quizArea"></div>
-<div id="resultArea"></div>
+    <aside class="right">
+        <h3>History</h3>
+        <div id="history"></div>
+    </aside>
+</main>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
