@@ -1,110 +1,69 @@
-* {
-  box-sizing: border-box;
-  font-family: system-ui, sans-serif;
-}
-
 body {
-  margin: 0;
-  background: #1e1f23;
-  color: #fff;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
 }
 
 header {
-  padding: 15px;
-  background: #111;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+    display: flex;
+    justify-content: space-between;
+    padding: 15px 30px;
+    background: #ffffff;
+    border-bottom: 1px solid #ddd;
 }
 
-.modes button {
-  background: #2a2b30;
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  margin-left: 8px;
-  border-radius: 8px;
-  cursor: pointer;
+.logo {
+    font-weight: bold;
+    font-size: 20px;
 }
 
-.modes .active {
-  background: #3b82f6;
+nav a {
+    margin-left: 20px;
+    cursor: pointer;
+    color: #333;
 }
 
 main {
-  padding: 20px;
-  min-height: calc(100vh - 140px);
+    display: flex;
+    padding: 20px;
 }
 
-.mode.hidden {
-  display: none;
+.left {
+    flex: 2;
+    margin-right: 20px;
 }
 
-.chat .ai {
-  background: #2b2c31;
-  padding: 15px;
-  border-radius: 12px;
-  max-width: 600px;
+.right {
+    flex: 1;
+    background: #e0e0e0;
+    padding: 15px;
+    border-radius: 10px;
 }
 
-.card {
-  background: #2b2c31;
-  padding: 20px;
-  border-radius: 12px;
-  max-width: 600px;
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
 }
 
-.answer {
-  color: #22c55e;
+button {
+    padding: 8px 15px;
+    background: #2d7ff9;
+    color: white;
+    border: none;
+    cursor: pointer;
 }
 
-.options button {
-  width: 100%;
-  margin: 6px 0;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-  background: #3a3b40;
-  color: #fff;
-  cursor: pointer;
+.box {
+    background: #ddd;
+    padding: 15px;
+    border-radius: 10px;
+    min-height: 80px;
 }
 
-.options button.correct {
-  background: #16a34a;
-}
-
-.options button.wrong {
-  background: #dc2626;
-}
-
-.next {
-  margin-top: 10px;
-  width: 100%;
-  padding: 10px;
-  background: #3b82f6;
-  border: none;
-  color: #fff;
-  border-radius: 8px;
-}
-
-footer {
-  display: flex;
-  padding: 15px;
-  background: #111;
-}
-
-footer input {
-  flex: 1;
-  padding: 10px;
-  border-radius: 8px;
-  border: none;
-}
-
-footer button {
-  margin-left: 10px;
-  padding: 10px 16px;
-  border-radius: 8px;
-  border: none;
-  background: #3b82f6;
-  color: #fff;
+.history-item {
+    background: white;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
 }
