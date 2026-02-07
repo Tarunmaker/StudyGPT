@@ -1,0 +1,115 @@
+ 
++<!DOCTYPE html>
++<html lang="en">
++<head>
++    <meta charset="UTF-8">
++    <title>StudySmart Profile</title>
++    <link rel="stylesheet" href="/static/style.css">
++</head>
++<body class="profile-page">
++
++<header>
++    <div class="logo">🎓 StudySmart</div>
++    <nav>
++        <a href="/">Home</a>
++        <a href="/#tools">Study Tools</a>
++        <a href="/quick-tools">Quick Tools</a>
++        <a href="/community">Community</a>
++        <a href="/profile">Profile</a>
++    </nav>
++</header>
++
++<main class="profile-layout">
++    <section class="profile-hero">
++        <div class="profile-card">
++            <div class="avatar">AS</div>
++            <div>
++                <h2>Arjun Sharma</h2>
++                <p>Rank: <strong>#18</strong> • Level 5 Scholar</p>
++                <div class="badge-row">
++                    <span class="badge">🔥 7-Day Streak</span>
++                    <span class="badge">🏅 PYQ Master</span>
++                    <span class="badge">🎯 85% Accuracy</span>
++                </div>
++            </div>
++        </div>
++        <div class="profile-stats">
++            <div class="stat-card">
++                <p>Weekly Study Time</p>
++                <h3>12.5 hrs</h3>
++            </div>
++            <div class="stat-card">
++                <p>Topics Covered</p>
++                <h3 id="topic-count">0</h3>
++            </div>
++            <div class="stat-card">
++                <p>Mock Tests</p>
++                <h3>4 Completed</h3>
++            </div>
++        </div>
++    </section>
++
++    <section class="profile-readiness">
++        <div class="tool-card">
++            <div class="tool-header">
++                <h3>Exam Readiness Score</h3>
++                <p>Based on streaks, mock tests, and accuracy.</p>
++            </div>
++            <div class="readiness-meter">
++                <div class="meter-value" id="readiness-score">68%</div>
++                <div class="meter-bar">
++                    <div class="meter-fill" id="readiness-fill" style="width: 68%;"></div>
++                </div>
++                <p class="readiness-tip">Keep mock tests and consistency high to boost this score.</p>
++            </div>
++        </div>
++        <div class="tool-card">
++            <div class="tool-header">
++                <h3>Streak League</h3>
++                <p>Compete with others in your cohort.</p>
++            </div>
++            <ul class="league-list">
++                <li><span>#1</span> Riya • 21 days</li>
++                <li><span>#2</span> Kabir • 18 days</li>
++                <li class="highlight"><span>#3</span> You • 16 days</li>
++                <li><span>#4</span> Sahil • 14 days</li>
++            </ul>
++        </div>
++    </section>
++
++    <section class="profile-progress">
++        <div class="tool-card">
++            <div class="tool-header">
++                <h3>Progress Tracker</h3>
++                <p>Update your daily streak, topics, and accuracy.</p>
++            </div>
++            <div class="progress-grid">
++                <div class="progress-card">
++                    <h4>Study Streak</h4>
++                    <div class="stat" id="streak-count">0 days</div>
++                    <button onclick="markStudyDone()">Mark Study Done</button>
++                </div>
++                <div class="progress-card">
++                    <h4>Topics Covered</h4>
++                    <div class="topic-inputs">
++                        <input id="topic-input" placeholder="Add topic (e.g., Polity)" />
++                        <button class="secondary" onclick="addTopic()">Add</button>
++                    </div>
++                    <ul id="topic-list" class="topic-list"></ul>
++                </div>
++                <div class="progress-card">
++                    <h4>Accuracy</h4>
++                    <div class="accuracy-inputs">
++                        <input id="accuracy-input" type="number" min="0" max="100" placeholder="%" />
++                        <button class="secondary" onclick="saveAccuracy()">Save</button>
++                    </div>
++                    <div class="stat" id="accuracy-display">0%</div>
++                </div>
++            </div>
++        </div>
++    </section>
++</main>
++
++<script src="/static/profile.js"></script>
++</body>
++</html>
