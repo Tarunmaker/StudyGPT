@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>StudySmart Quick Tools</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="tools-page">
+
+<header>
+    <div class="logo">🎓 StudySmart</div>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/#tools">Study Tools</a>
+        <a href="/quick-tools">Quick Tools</a>
+        <a href="/community">Community</a>
+        <a href="/profile">Profile</a>
+    </nav>
+</header>
+
+<main class="chat-layout">
+    <section class="chat-shell">
+        <div class="tools-section">
+            <div class="tools-header">
+                <h3>Quick Tools</h3>
+                <p>Generate quizzes or summarize your notes instantly.</p>
+            </div>
+            <div class="quick-tools">
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <h3>Quiz Generator</h3>
+                        <p>Enter any topic to auto-generate quiz questions.</p>
+                    </div>
+                    <input id="topic" placeholder="Enter quiz topic" />
+                    <button onclick="generateQuiz()">Generate Quiz</button>
+                    <div id="quiz-output" class="tool-result">Quiz output will appear in the main answer panel.</div>
+                </div>
+                <div class="tool-card">
+                    <div class="tool-header">
+                        <h3>Summarize Notes</h3>
+                        <p>Paste notes and get a short summary instantly.</p>
+                    </div>
+                    <textarea id="notes" placeholder="Paste notes here"></textarea>
+                    <button onclick="summarizeNotes()">Summarize</button>
+                    <div id="summary-output" class="tool-result">Summary will appear in the main answer panel.</div>
+                </div>
+            </div>
+
+            <div class="tool-card">
+                <div class="tool-header">
+                    <h3>Output</h3>
+                    <p>Your generated quiz or summary appears here.</p>
+                </div>
+                <div id="answer" class="tool-result">Output will appear here.</div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<script src="/static/script.js"></script>
+</body>
+</html>
